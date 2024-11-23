@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import { CreateUserPage } from './pages/CreateUserPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { LoginPage } from './pages/LoginPage';
 
 function App() {
 
@@ -19,6 +20,7 @@ function App() {
   return (
     <div>
       <CreateUserPage/>
+      <LoginPage/>
     </div>
   );
   

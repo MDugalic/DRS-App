@@ -22,19 +22,20 @@ export const CreateUserPage = () => {
 
   const isValidInput = (name, value) => {
     const noNumberFields = ["city", "FirstName", "LastName", "CountryName"];
-
     if (noNumberFields.includes(name) && /\d/.test(value)) {
-        return false;
+      return false;
     }
     return true;
-  }
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    
-    //Block client form typing numbers in certain fields
+
+    // Block client form typing numbers in certain fields
     if (!isValidInput(name, value)) {
-        return;
+      return;
     }
+
     setFormData((prevData) => ({
       ...prevData,
       [name]: value,
@@ -61,145 +62,150 @@ export const CreateUserPage = () => {
 
     setErrors({}); // Clear errors if validation passes
     console.log('Form submitted:', formData);
-    // Add your API call or further processing here
+    // send to API
   };
 
   return (
-    <Form className='register-page-layout' onSubmit={register}>
-      <Row className="mb-3">
-        <Col xs={12} md={6}>
-          <Form.Group className="mb-3" controlId="firstName">
-            <Form.Label>First Name</Form.Label>
-            <Form.Control 
-              type="text" 
-              name="firstName" 
-              value={formData.firstName} 
-              onChange={handleChange} 
-              isInvalid={!!errors.firstName}
+    <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh' }}>
+      <div>
+        <h1 className="text-center mb-4">Register a new user</h1> {/* Add margin-bottom */}
+        <Form className="form-page-layout" onSubmit={register}>
+          <Row className="mb-3">
+            <Col xs={12} md={6}>
+              <Form.Group className="mb-3" controlId="firstName">
+                <Form.Label>First Name</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  isInvalid={!!errors.firstName}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {errors.firstName}
+                </Form.Control.Feedback>
+              </Form.Group>
+            </Col>
+            <Col xs={12} md={6}>
+              <Form.Group className="mb-3" controlId="lastName">
+                <Form.Label>Last Name</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  isInvalid={!!errors.lastName}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {errors.lastName}
+                </Form.Control.Feedback>
+              </Form.Group>
+            </Col>
+          </Row>
+
+          <Form.Group className="mb-3" controlId="address">
+            <Form.Label>Address</Form.Label>
+            <Form.Control
+              type="text"
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              isInvalid={!!errors.address}
             />
             <Form.Control.Feedback type="invalid">
-              {errors.firstName}
+              {errors.address}
             </Form.Control.Feedback>
           </Form.Group>
-        </Col>
-        <Col xs={12} md={6}>
-          <Form.Group className="mb-3" controlId="lastName">
-            <Form.Label>Last Name</Form.Label>
-            <Form.Control 
-              type="text" 
-              name="lastName" 
-              value={formData.lastName} 
-              onChange={handleChange} 
-              isInvalid={!!errors.lastName}
+
+          <Form.Group className="mb-3" controlId="city">
+            <Form.Label>City</Form.Label>
+            <Form.Control
+              type="text"
+              name="city"
+              value={formData.city}
+              onChange={handleChange}
+              isInvalid={!!errors.city}
             />
             <Form.Control.Feedback type="invalid">
-              {errors.lastName}
+              {errors.city}
             </Form.Control.Feedback>
           </Form.Group>
-        </Col>
-      </Row>
 
-      <Form.Group className="mb-3" controlId="address">
-        <Form.Label>Address</Form.Label>
-        <Form.Control 
-          type="text" 
-          name="address" 
-          value={formData.address} 
-          onChange={handleChange} 
-          isInvalid={!!errors.address}
-        />
-        <Form.Control.Feedback type="invalid">
-          {errors.address}
-        </Form.Control.Feedback>
-      </Form.Group>
+          <Form.Group className="mb-3" controlId="country">
+            <Form.Label>Country</Form.Label>
+            <Form.Control
+              type="text"
+              name="country"
+              value={formData.country}
+              onChange={handleChange}
+              isInvalid={!!errors.country}
+            />
+            <Form.Control.Feedback type="invalid">
+              {errors.country}
+            </Form.Control.Feedback>
+          </Form.Group>
 
-      <Form.Group className="mb-3" controlId="city">
-        <Form.Label>City</Form.Label>
-        <Form.Control 
-          type="text" 
-          name="city" 
-          value={formData.city} 
-          onChange={handleChange} 
-          isInvalid={!!errors.city}
-        />
-        <Form.Control.Feedback type="invalid">
-          {errors.city}
-        </Form.Control.Feedback>
-      </Form.Group>
+          <Form.Group className="mb-3" controlId="phone">
+            <Form.Label>Phone number</Form.Label>
+            <Form.Control
+              type="text"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              isInvalid={!!errors.phone}
+            />
+            <Form.Control.Feedback type="invalid">
+              {errors.phone}
+            </Form.Control.Feedback>
+          </Form.Group>
 
-      <Form.Group className="mb-3" controlId="country">
-        <Form.Label>Country</Form.Label>
-        <Form.Control 
-          type="text" 
-          name="country" 
-          value={formData.country} 
-          onChange={handleChange} 
-          isInvalid={!!errors.country}
-        />
-        <Form.Control.Feedback type="invalid">
-          {errors.country}
-        </Form.Control.Feedback>
-      </Form.Group>
+          <Form.Group className="mb-3" controlId="email">
+            <Form.Label>Email address</Form.Label>
+            <Form.Control
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              isInvalid={!!errors.email}
+            />
+            <Form.Control.Feedback type="invalid">
+              {errors.email}
+            </Form.Control.Feedback>
+          </Form.Group>
 
-      <Form.Group className="mb-3" controlId="phone">
-        <Form.Label>Phone number</Form.Label>
-        <Form.Control 
-          type="text" 
-          name="phone" 
-          value={formData.phone} 
-          onChange={handleChange} 
-          isInvalid={!!errors.phone}
-        />
-        <Form.Control.Feedback type="invalid">
-          {errors.phone}
-        </Form.Control.Feedback>
-      </Form.Group>
+          <Form.Group className="mb-3" controlId="username">
+            <Form.Label>Username</Form.Label>
+            <Form.Control
+              type="text"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              isInvalid={!!errors.username}
+            />
+            <Form.Control.Feedback type="invalid">
+              {errors.username}
+            </Form.Control.Feedback>
+          </Form.Group>
 
-      <Form.Group className="mb-3" controlId="email">
-        <Form.Label>Email address</Form.Label>
-        <Form.Control 
-          type="email" 
-          name="email" 
-          value={formData.email} 
-          onChange={handleChange} 
-          isInvalid={!!errors.email}
-        />
-        <Form.Control.Feedback type="invalid">
-          {errors.email}
-        </Form.Control.Feedback>
-      </Form.Group>
+          <Form.Group className="mb-3" controlId="password">
+            <Form.Label>Password</Form.Label>
+            <Form.Control
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              isInvalid={!!errors.password}
+            />
+            <Form.Control.Feedback type="invalid">
+              {errors.password}
+            </Form.Control.Feedback>
+          </Form.Group>
 
-      <Form.Group className="mb-3" controlId="username">
-        <Form.Label>Username</Form.Label>
-        <Form.Control 
-          type="text" 
-          name="username" 
-          value={formData.username} 
-          onChange={handleChange} 
-          isInvalid={!!errors.username}
-        />
-        <Form.Control.Feedback type="invalid">
-          {errors.username}
-        </Form.Control.Feedback>
-      </Form.Group>
-
-      <Form.Group className="mb-3" controlId="password">
-        <Form.Label>Password</Form.Label>
-        <Form.Control 
-          type="password" 
-          name="password" 
-          value={formData.password} 
-          onChange={handleChange} 
-          isInvalid={!!errors.password}
-        />
-        <Form.Control.Feedback type="invalid">
-          {errors.password}
-        </Form.Control.Feedback>
-      </Form.Group>
-
-      <Button variant="primary" type="submit">
-        Submit
-      </Button>
-    </Form>
+          <Button className="d-flex mx-auto" variant="primary" type="submit">
+            Submit
+          </Button>
+        </Form>
+      </div>
+    </div>
   );
 };

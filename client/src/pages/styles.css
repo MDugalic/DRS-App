@@ -1,4 +1,5 @@
-.register-page-layout {
-    max-width: 300px;
+.form-page-layout {
+    max-width: 500px;
+    min-width: 320px;
     padding: 10px;
 }
