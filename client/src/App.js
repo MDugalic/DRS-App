@@ -1,10 +1,12 @@
 import React, {useState, useEffect} from 'react'
+import { CreateUserPage } from './pages/CreateUserPage';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
 
   const [data, setData] = useState({ members: [] });
 
-  useEffect(() => {
+  /*useEffect(() => {
     fetch("/members").then(
       res => res.json()
     ).then( data => {
@@ -12,10 +14,11 @@ function App() {
         console.log(data)
       }
     )
-  }, [])
+  }, [])*/
 
   return (
     <div>
+      <CreateUserPage/>
     </div>
   );
   
