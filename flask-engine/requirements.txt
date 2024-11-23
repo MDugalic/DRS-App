@@ -1,0 +1,8 @@
+flask
+flask-smorest
+python-dotenv
+sqlalchemy
+flask-sqlalchemy
+mysqlclient
+flask-migrate
+marshmallow

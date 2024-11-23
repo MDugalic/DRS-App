@@ -1,0 +1,50 @@
+# Python bytecode files
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+
+# Virtual environment
+venv/
+.env/
+.venv/
+
+# IDE settings
+.idea/
+.vscode/
+
+# Flask specific (sometimes generated files)
+instance/
+.pytest_cache/
+
+# OS-specific files
+.DS_Store       # macOS
+Thumbs.db       # Windows
+
+# Log files
+*.log
+
+# Temporary files
+*.swp
+*.swo
+*.bak
+
+# Python distribution packages
+*.egg
+*.egg-info
+dist/
+build/
+.eggs/
+
+# Pipenv
+Pipfile.lock
+
+# pytest and coverage
+.coverage
+*.coveragerc
+nosetests.xml
+coverage.xml
+*.hypothesis/
+
+# MyPy configuration
+.mypy_cache/
