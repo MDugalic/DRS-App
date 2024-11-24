@@ -6,3 +6,4 @@ flask-sqlalchemy
 mysqlclient
 flask-migrate
 marshmallow
+flask-cors

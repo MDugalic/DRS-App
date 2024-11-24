@@ -4,15 +4,16 @@ import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import './styles.css';
+import axios from 'axios';
 
 export const CreateUserPage = () => {
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
+    first_name: '',
+    last_name: '',
     address: '',
     city: '',
     country: '',
-    phone: '',
+    phone_number: '',
     email: '',
     username: '',
     password: '',
@@ -21,7 +22,7 @@ export const CreateUserPage = () => {
   const [errors, setErrors] = useState({});
 
   const isValidInput = (name, value) => {
-    const noNumberFields = ["city", "FirstName", "LastName", "CountryName"];
+    const noNumberFields = ["city", "first_name", "last_name", "country"];
     if (noNumberFields.includes(name) && /\d/.test(value)) {
       return false;
     }
@@ -32,9 +33,9 @@ export const CreateUserPage = () => {
     const { name, value } = e.target;
 
     // Block client form typing numbers in certain fields
-    if (!isValidInput(name, value)) {
+    /*if (!isValidInput(name, value)) {
       return;
-    }
+    }*/
 
     setFormData((prevData) => ({
       ...prevData,
@@ -46,7 +47,7 @@ export const CreateUserPage = () => {
     const newErrors = {};
     Object.keys(formData).forEach((key) => {
       if (!formData[key].trim()) {
-        newErrors[key] = `${key.charAt(0).toUpperCase() + key.slice(1)} is required`;
+        newErrors[key] = `${key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ')} is required`;
       }
     });
     return newErrors;
@@ -61,48 +62,70 @@ export const CreateUserPage = () => {
     }
 
     setErrors({}); // Clear errors if validation passes
-    console.log('Form submitted:', formData);
+    console.log(formData);
+
     // send to API
+    try {
+      const response = await axios.post('/register', formData, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      console.log('User registered successfully:', response.data);
+      // Redirect, show success message, or clear the form here
+    } catch (error) {
+      console.error('There was an error registering the user:', error);
+      if (error.response) {
+        // If the server responds with a status code outside the 2xx range
+        console.error('Error response:', error.response);
+        setErrors({ server: 'An error occurred while registering the user. Please try again later.' });
+      } else {
+        // If the error is not related to the server (e.g., network error)
+        setErrors({ server: 'Network error. Please check your connection.' });
+      }
+    }
   };
 
   return (
     <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh' }}>
       <div>
-        <h1 className="text-center mb-4">Register a new user</h1> {/* Add margin-bottom */}
+        <h1 className="text-center mb-4">Register a new user</h1>
         <Form className="form-page-layout" onSubmit={register}>
+          {/* First Name and Last Name */}
           <Row className="mb-3">
             <Col xs={12} md={6}>
-              <Form.Group className="mb-3" controlId="firstName">
+              <Form.Group className="mb-3" controlId="first_name">
                 <Form.Label>First Name</Form.Label>
                 <Form.Control
                   type="text"
-                  name="firstName"
-                  value={formData.firstName}
+                  name="first_name"
+                  value={formData.first_name}
                   onChange={handleChange}
-                  isInvalid={!!errors.firstName}
+                  isInvalid={!!errors.first_name}
                 />
                 <Form.Control.Feedback type="invalid">
-                  {errors.firstName}
+                  {errors.first_name}
                 </Form.Control.Feedback>
               </Form.Group>
             </Col>
             <Col xs={12} md={6}>
-              <Form.Group className="mb-3" controlId="lastName">
+              <Form.Group className="mb-3" controlId="last_name">
                 <Form.Label>Last Name</Form.Label>
                 <Form.Control
                   type="text"
-                  name="lastName"
-                  value={formData.lastName}
+                  name="last_name"
+                  value={formData.last_name}
                   onChange={handleChange}
-                  isInvalid={!!errors.lastName}
+                  isInvalid={!!errors.last_name}
                 />
                 <Form.Control.Feedback type="invalid">
-                  {errors.lastName}
+                  {errors.last_name}
                 </Form.Control.Feedback>
               </Form.Group>
             </Col>
           </Row>
 
+          {/* Address */}
           <Form.Group className="mb-3" controlId="address">
             <Form.Label>Address</Form.Label>
             <Form.Control
@@ -117,6 +140,7 @@ export const CreateUserPage = () => {
             </Form.Control.Feedback>
           </Form.Group>
 
+          {/* City */}
           <Form.Group className="mb-3" controlId="city">
             <Form.Label>City</Form.Label>
             <Form.Control
@@ -131,6 +155,7 @@ export const CreateUserPage = () => {
             </Form.Control.Feedback>
           </Form.Group>
 
+          {/* Country */}
           <Form.Group className="mb-3" controlId="country">
             <Form.Label>Country</Form.Label>
             <Form.Control
@@ -145,22 +170,24 @@ export const CreateUserPage = () => {
             </Form.Control.Feedback>
           </Form.Group>
 
-          <Form.Group className="mb-3" controlId="phone">
-            <Form.Label>Phone number</Form.Label>
+          {/* Phone Number */}
+          <Form.Group className="mb-3" controlId="phone_number">
+            <Form.Label>Phone Number</Form.Label>
             <Form.Control
               type="text"
-              name="phone"
-              value={formData.phone}
+              name="phone_number"
+              value={formData.phone_number}
               onChange={handleChange}
-              isInvalid={!!errors.phone}
+              isInvalid={!!errors.phone_number}
             />
             <Form.Control.Feedback type="invalid">
-              {errors.phone}
+              {errors.phone_number}
             </Form.Control.Feedback>
           </Form.Group>
 
+          {/* Email */}
           <Form.Group className="mb-3" controlId="email">
-            <Form.Label>Email address</Form.Label>
+            <Form.Label>Email Address</Form.Label>
             <Form.Control
               type="email"
               name="email"
@@ -173,6 +200,7 @@ export const CreateUserPage = () => {
             </Form.Control.Feedback>
           </Form.Group>
 
+          {/* Username */}
           <Form.Group className="mb-3" controlId="username">
             <Form.Label>Username</Form.Label>
             <Form.Control
@@ -187,6 +215,7 @@ export const CreateUserPage = () => {
             </Form.Control.Feedback>
           </Form.Group>
 
+          {/* Password */}
           <Form.Group className="mb-3" controlId="password">
             <Form.Label>Password</Form.Label>
             <Form.Control
@@ -200,6 +229,13 @@ export const CreateUserPage = () => {
               {errors.password}
             </Form.Control.Feedback>
           </Form.Group>
+
+          {/* Server Error */}
+          {errors.server && (
+            <div className="alert alert-danger">
+              {errors.server}
+            </div>
+          )}
 
           <Button className="d-flex mx-auto" variant="primary" type="submit">
             Submit

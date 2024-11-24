@@ -1,10 +1,11 @@
 from flask import Flask
 from flask_smorest import Api
-import models
 from flask_migrate import Migrate
+from .routes.users import users_bp
+from flask_cors import CORS
 
 import os
-from database import db
+from .database import db
 
 #We can provide an optional parameter for the db connection string
 def create_app(db_url=None):
@@ -13,7 +14,9 @@ def create_app(db_url=None):
     init_swagger(app)           #Configure swagger settings
     configure_db(app, db_url)   #Configure database
     api = Api(app)              #Connect flask-smorest with the app
-
+    migrate = Migrate(app, db)  #Alembic migrations
+    CORS(app, origins="http://localhost:3000")
+    api.register_blueprint(users_bp)
     return app
 
 def init_swagger(app):
@@ -34,7 +37,7 @@ def configure_db(app, db_url=None):
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     #initialises sqlalchemy extension. We give it our flask app so it can connect it to sqlalchemy
     db.init_app(app)
-    migrate = Migrate(app, db)  #Alembic migrations
+
 
 app = create_app()
 if __name__ == "__main__":
