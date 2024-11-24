@@ -3,6 +3,7 @@ from flask_smorest import Api
 from flask_migrate import Migrate
 from .routes.users import users_bp
 from flask_cors import CORS
+from flask_jwt_extended import JWTManager
 
 import os
 from .database import db
@@ -16,6 +17,11 @@ def create_app(db_url=None):
     api = Api(app)              #Connect flask-smorest with the app
     migrate = Migrate(app, db)  #Alembic migrations
     CORS(app, origins="http://localhost:3000")
+
+    #jwt setup
+    app.config["JWT_SECRET_KEY"] = "secret_key"
+    jwt = JWTManager(app)
+    
     api.register_blueprint(users_bp)
     return app
 

@@ -2,25 +2,35 @@ import React, { useState } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import './styles.css';
+import axios from 'axios';
 
 export const LoginPage = () => {
-    const [email, setEmail] = useState("");
+    const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
-    const login = async () => {
-        
-    }
+    
+    const handleLogin = async (event) => {
+        event.preventDefault();
+        const loginData = { username, password };
+
+        try {
+            const response = await axios.post('/login', loginData);
+            console.log(response.data);
+        } catch (error) {
+            console.error("Error sending login data:", error);
+        }
+    };
 
     return (
         <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh' }}>
-        <Form className="form-page-layout">
+        <Form className="form-page-layout" onSubmit={handleLogin}>
             <Form.Group className="mb-3">
-                <Form.Label>E-mail</Form.Label>
+                <Form.Label>Username</Form.Label>
                 <Form.Control
-                    type="email"
-                    name="email"
-                    value={email}
-                    onChange={(event) => setEmail(event.target.value)}/>
+                    type="text"
+                    name="username"
+                    value={username}
+                    onChange={(event) => setUsername(event.target.value)}/>
             </Form.Group>
 
             <Form.Group className="mb-3">
@@ -32,7 +42,7 @@ export const LoginPage = () => {
                     onChange={(event) => setPassword(event.target.value)}/>
             </Form.Group>
 
-            <Button variant="primary" type="submit" onChange={login}>
+            <Button variant="primary" type="submit">
                 Sign in
             </Button>
         </Form>

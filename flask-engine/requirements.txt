@@ -7,3 +7,5 @@ mysqlclient
 flask-migrate
 marshmallow
 flask-cors
+flask-jwt-extended
+passlib
