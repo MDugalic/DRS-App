@@ -1,0 +1,16 @@
+.create-post-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.create-post-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.create-post-form-footer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 10px;
+}
