@@ -15,3 +15,10 @@ class UserSchema(Schema):
 class UserLoginSchema(Schema):
     username = fields.Str(required=True)
     password = fields.Str(required=True)
+
+# Not used 
+# Not sure an image file can be checked properly with a schema
+class CreatePostSchema(Schema):
+    username = fields.Str(required=True)
+    text = fields.Str(required=False)
+    image = fields.Str(required=False)

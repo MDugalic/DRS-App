@@ -1,19 +1,17 @@
-import uuid
 from app.database import db
-from sqlalchemy import Column, String, Boolean
-
+import uuid
 
 class Post(db.Model):
     __tablename__ = 'posts'
 
-    Id = db.Column(db.String(255), primary_key=True, default=lambda: str(uuid.uuid4()))
-    Username = db.Column(db.String(255), nullable=False)
-    Txt = db.Column(db.String(255), nullable=True)
-    ImagePath = db.Column(db.String(255), nullable=True)
-    Approved = db.Column(db.Boolean, nullable=False, default=False)
+    id = db.Column(db.String(255), primary_key=True, default=lambda: str(uuid.uuid4()))
+    username = db.Column(db.String(50), nullable=False)
+    text = db.Column(db.String(220), nullable=True)
+    image_path = db.Column(db.String(255), nullable=True)
+    approved = db.Column(db.Boolean, nullable=False, default=False)
 
     def __repr__(self):
-        return f"<Username {self.Username}>"
+        return f"<Username {self.username}>"
 
     def get_id(self):
-        return self.Id
+        return self.id
