@@ -11,11 +11,23 @@ export const LoginPage = () => {
     
     const handleLogin = async (event) => {
         event.preventDefault();
+        
+        // Clear any old tokens (like from Google)
+        localStorage.removeItem('access_token');  // or sessionStorage.removeItem('access_token');
+
         const loginData = { username, password };
 
         try {
             const response = await axios.post('/login', loginData);
-            console.log(response.data);
+
+            // Assuming backend returns only your project's token
+            if (response.data && response.data.access_token) {
+                // Store the new token
+                localStorage.setItem('access_token', response.data.access_token);
+
+                // Proceed with login success actions
+                console.log("Login successful, token:", response.data.access_token);
+            }
         } catch (error) {
             console.error("Error sending login data:", error);
         }

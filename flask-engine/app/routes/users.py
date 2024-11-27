@@ -87,4 +87,32 @@ class UpdateUserProfile(MethodView):
             abort(500, message="Error updating profile.")
 
         return user
+
+@users_bp.route("/get_current_user", methods=["GET"])
+class GetUserProfile(MethodView):
+    @jwt_required()
+    def get(self):
+        # Fetch the user ID from the token
+        user_id = get_jwt_identity()
+
+        # Fetch user data from the database
+        user = UserModel.query.get(user_id)
+
+        if not user:
+            abort(404, message="User not found.")
+        
+        # Return only the necessary fields (to match frontend expectations)
+        user_data = {
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "address": user.address,
+            "city": user.city,
+            "country": user.country,
+            "phone_number": user.phone_number,
+            "email": user.email,
+            "username": user.username,
+            "password": user.password,
+        }
+
+        return user_data
     
