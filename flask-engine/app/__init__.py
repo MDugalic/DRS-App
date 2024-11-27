@@ -5,6 +5,7 @@ from .routes.users import users_bp
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from .services import mail
+from datetime import timedelta
 
 import os
 from .database import db
@@ -22,6 +23,7 @@ def create_app(db_url=None):
 
     #jwt setup
     app.config["JWT_SECRET_KEY"] = "secret_key"
+    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=365*100)
     jwt = JWTManager(app)
     
     api.register_blueprint(users_bp)
