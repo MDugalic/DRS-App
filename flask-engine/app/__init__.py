@@ -2,6 +2,7 @@ from flask import Flask
 from flask_smorest import Api
 from flask_migrate import Migrate
 from .routes.users import users_bp
+from .routes.posts import bp as posts_bp
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from .services import mail
@@ -26,7 +27,8 @@ def create_app(db_url=None):
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=365*100)
     jwt = JWTManager(app)
     
-    api.register_blueprint(users_bp)
+    api.register_blueprint(users_bp)                 # flask-smorest blueprint is in api
+    app.register_blueprint(posts_bp, url_prefix="/posts")  # flask blueprint is in app
     return app
 
 def init_swagger(app):

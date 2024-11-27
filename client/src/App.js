@@ -3,6 +3,7 @@ import { CreateUserPage } from './pages/CreateUserPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { LoginPage } from './pages/LoginPage';
 import { UpdateUserPage } from './pages/UpdateUserPage';
+import { CreatePost } from './components/CreatePost/CreatePost';
 
 function App() {
 
