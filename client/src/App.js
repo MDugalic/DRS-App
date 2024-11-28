@@ -4,6 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { LoginPage } from './pages/LoginPage';
 import { UpdateUserPage } from './pages/UpdateUserPage';
 import { CreatePost } from './components/CreatePost/CreatePost';
+import { ProfilePage } from './pages/ProfilePage';
 
 function App() {
 
@@ -23,7 +24,8 @@ function App() {
     <div>
       {/* <CreateUserPage/> */}
       <LoginPage/>
-      <UpdateUserPage></UpdateUserPage>
+      {/* <UpdateUserPage></UpdateUserPage> */}
+      <ProfilePage></ProfilePage>
     </div>
   );
   
