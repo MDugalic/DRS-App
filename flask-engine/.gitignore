@@ -1,3 +1,6 @@
+/uploads/
+
+
 # Python bytecode files
 *.pyc
 *.pyo

@@ -18,6 +18,10 @@ class User(db.Model):
     # 'user', 'admin'
     role = db.Column(db.String(20), nullable=False, default="user")
 
+    posts = db.relationship('Post',
+                            back_populates='user',
+                            cascade="all, delete-orphan")
+
     #same as public override ToString()
     #__str__ has the same function, but this is preferred for development
     def __repr__(self):
