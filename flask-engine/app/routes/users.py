@@ -1,8 +1,9 @@
-from flask import request
+from flask import request, jsonify
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from app.models import User as UserModel
+from app.models import Post as PostModel
 from ..database import db
 from ..schemas import UserLoginSchema
 from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt_identity, jwt_required, get_jwt
@@ -115,4 +116,48 @@ class GetUserProfile(MethodView):
         }
 
         return user_data
+    
+@users_bp.route("/profile/<username>", methods=["GET"])
+class UserProfile(MethodView):
+    @jwt_required()  # Ensure only authorized users can view profiles
+    def get(self, username):
+        # Fetch the current logged-in user ID
+        current_user_id = get_jwt_identity()
+
+        # Fetch the profile user by username
+        user = UserModel.query.filter_by(username=username).first()
+
+        if not user:
+            abort(404, message="User not found.")
+
+        # Check if the profile is the current logged-in user
+        is_current_user = (str(user.id) == current_user_id)
+
+        # Fetch the user's posts
+        posts = PostModel.query.filter_by(user_id=user.id).all()
+
+        # Prepare response data
+        user_data = {
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "address": user.address,
+            "city": user.city,
+            "country": user.country,
+            "phone_number": user.phone_number,
+            "email": user.email,
+            "username": user.username,
+        }
+
+        # Prepare posts
+        if posts:
+            posts_data = [{"id": post.id, "text": post.text, "image_path": post.image_path} for post in posts]
+        else:
+            posts_data = None
+
+        # Return the profile data and posts
+        return jsonify({
+            "user": user_data,
+            "is_current_user": is_current_user,
+            "posts": posts_data or "User has made no posts."
+        })
     

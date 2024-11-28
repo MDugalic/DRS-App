@@ -23,7 +23,7 @@ function App() {
     <div>
       {/* <CreateUserPage/> */}
       <LoginPage/>
-      <UpdateUserPage></UpdateUserPage>
+      {/* <UpdateUserPage></UpdateUserPage> */}
     </div>
   );
   
