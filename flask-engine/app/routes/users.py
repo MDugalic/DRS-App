@@ -158,6 +158,6 @@ class UserProfile(MethodView):
         return jsonify({
             "user": user_data,
             "is_current_user": is_current_user,
-            "posts": posts_data or "User has made no posts."
+            "posts": posts_data or "User hasn't made any posts yet."
         })
     
