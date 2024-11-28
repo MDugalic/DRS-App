@@ -1,6 +1,6 @@
 import os
 from werkzeug.utils import secure_filename
-from flask import request, Blueprint
+from flask import request, Blueprint, jsonify
 from app.models import Post
 from app.database import db
 
@@ -10,11 +10,16 @@ UPLOAD_FOLDER = 'uploads'
 
 @bp.route('/create', methods=['POST'])
 def create_post():
-    username = request.form.get('username')
+    user_id = request.form.get('user_id')
+    # should be implemented using session object:
+    # user_id = session.get('user_id')
+    # if not User.query.get(user_id):
+    #     abort(403)  # Unauthorized access
+
     text = request.form.get('text')
     image = request.files.get('image')
 
-    if username is None:
+    if user_id is None:
         return {"message": "Not logged in."}, 400
 
     if not text and not image:
@@ -32,11 +37,39 @@ def create_post():
         image.save(image_path)
         print(f"Image saved to: {image_path}")
 
-    post = Post(username = username, text = text, image_path = image_path)
+    post = Post(user_id = user_id, text = text, image_path = image_path)
     db.session.add(post)
     db.session.commit()
     return {"message": "Post created successfully."}, 201
 
+@bp.route('/get', methods=['GET'])
+def get_post():
+    user_id = request.form.get('user_id')
+    # should be implemented using session object:
+    # user_id = session.get('user_id')
+    # if not User.query.get(user_id):
+    #     abort(403)  # Unauthorized access
+
+    if user_id is None:
+        return {"message": "User ID is required."}, 400
+    posts = Post.query.filter_by(user_id=user_id).all()
+
+    if not posts:
+        return {"message": "No posts found for this user."}, 404
+
+    posts_list = []
+    for post in posts:
+        post_data = {
+            "id": post.id,
+            "text": post.text,
+            "image_path": post.image_path,
+            "approved": post.approved,
+        }
+        posts_list.append(post_data)
+
+    return jsonify(posts_list), 200
+
+    
 @bp.route('/edit', methods=['PUT'])
 def edit_post():
     post_id = request.form.get('id')
@@ -48,9 +81,7 @@ def edit_post():
         return {"message": "Post ID is required."}, 400
 
     # Fetch the post to be updated
-    post = Post.query.get(post_id)
-    if not post:
-        return {"message": "Post not found."}, 404
+    post = Post.query.get_or_404(post_id)
 
     # Update text field if provided
     if text:
@@ -82,14 +113,15 @@ def edit_post():
     db.session.commit()
     return {"message": "Post updated successfully."}, 200
 
+# !!!!!!!!
+# We need additional authorization
+# Don't know if <id> should be passed in the URL
 @bp.route('/delete/<id>', methods=['DELETE'])
 def delete_post(id):
     if not id:
         return {"message": "Post ID is required."}, 400
 
-    post = Post.query.get(id)
-    if not post:
-        return {"message": "Post not found."}, 404
+    post = Post.query.get_or_404(id)
     
     db.session.delete(post)
     db.session.commit()
