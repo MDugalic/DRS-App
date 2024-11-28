@@ -8,7 +8,7 @@ bp = Blueprint("posts", __name__)
 
 UPLOAD_FOLDER = 'uploads'
 
-@bp.route('/create_post', methods=['POST'])
+@bp.route('/create', methods=['POST'])
 def create_post():
     username = request.form.get('username')
     text = request.form.get('text')
@@ -37,7 +37,7 @@ def create_post():
     db.session.commit()
     return {"message": "Post created successfully."}, 201
 
-@bp.route('/edit_post', methods=['POST'])
+@bp.route('/edit', methods=['PUT'])
 def edit_post():
     post_id = request.form.get('id')
     text = request.form.get('text')
@@ -82,3 +82,15 @@ def edit_post():
     db.session.commit()
     return {"message": "Post updated successfully."}, 200
 
+@bp.route('/delete/<id>', methods=['DELETE'])
+def delete_post(id):
+    if not id:
+        return {"message": "Post ID is required."}, 400
+
+    post = Post.query.get(id)
+    if not post:
+        return {"message": "Post not found."}, 404
+    
+    db.session.delete(post)
+    db.session.commit()
+    return {"message": "Post deleted successfully."}, 200
