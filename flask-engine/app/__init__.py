@@ -68,14 +68,14 @@ def configure_db(app, db_url=None):
     db.init_app(app)
 
 def configure_mail(app):
-    app.config['MAIL_SERVER'] = 'smtp.example.com'
+    app.config['MAIL_SERVER'] = 'smtp.gmail.com'
     app.config['MAIL_PORT'] = 587
     app.config['MAIL_USE_TLS'] = True
-    app.config['MAIL_USERNAME'] = 'your-email@example.com'
-    app.config['MAIL_PASSWORD'] = 'your-password'
+    app.config['MAIL_USERNAME'] = 'drs.social.media.ftn@gmail.com'  # Your project email
+    app.config['MAIL_PASSWORD'] = 'beli vudo nwye gtte'                      # The password you set
+    app.config['MAIL_DEFAULT_SENDER'] = 'drs.social.media.ftn@gmail.com'  # Sender email
 
-    mail.init_app(app)  #Init flask-mail
-
+    mail.init_app(app)  # Initialize Flask-Mail with the app
 
 app = create_app()
 if __name__ == "__main__":

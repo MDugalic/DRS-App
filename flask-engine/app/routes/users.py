@@ -9,6 +9,7 @@ from ..schemas import UserLoginSchema
 from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt_identity, jwt_required, get_jwt
 from app.blocklist import BLOCKLIST
 from flask_login import login_user, logout_user, login_required, current_user
+from app.services.mail_service import EmailService
 
 from ..schemas import UserSchema
 
@@ -28,7 +29,11 @@ class RegisterUser(MethodView):
             abort(400, message = "Consistency error")
         except SQLAlchemyError: # Generic error
             abort(500, message="Error")
-
+        EmailService.send_email(
+            recipient=user.email,
+            subject=f"You have been registered to our social media!",
+            body=f"Dear {user.first_name},\n\nYour have been registered.\n\n\tYour username: {user.username}\n\tYour password: {user.password}\n\nBest regards,\nOur team"
+        )
         return user
 
 @users_bp.route("/login")
@@ -44,7 +49,23 @@ class UserLogin(MethodView):
             login_user(user)
             access_token = create_access_token(identity=str(user.id), fresh=True)
             #refresh_token = create_refresh_token(identity=user.id)
-            return {"access_token": access_token} # "refresh_token": refresh_token}        
+            if user.first_login:
+                # Update first_login flag
+                user.first_login = False
+                db.session.commit()
+
+                # Query all admin users
+                admins = UserModel.query.filter(UserModel.role == 'admin').all()
+
+                # Send an email to all admins
+                for admin in admins:
+                    EmailService.send_email(
+                        admin.email,
+                        "New User Logged In",
+                        f"A new user has logged in: {user.username}. This is their first login."
+                    )
+            return {"access_token": access_token} # "refresh_token": refresh_token}
+        
         abort(401, message="Invalid credentials.")
 
 @users_bp.route("/logout")
