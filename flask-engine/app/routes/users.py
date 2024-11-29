@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request, jsonify, redirect, url_for
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
@@ -8,6 +8,7 @@ from ..database import db
 from ..schemas import UserLoginSchema
 from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt_identity, jwt_required, get_jwt
 from app.blocklist import BLOCKLIST
+from flask_login import login_user, logout_user, login_required, current_user
 from app.services.mail_service import EmailService
 
 from ..schemas import UserSchema
@@ -45,6 +46,7 @@ class UserLogin(MethodView):
 
         # if user is not None, and password matches return token
         if user and login_data["password"] == user.password:
+            login_user(user)
             access_token = create_access_token(identity=str(user.id), fresh=True)
             #refresh_token = create_refresh_token(identity=user.id)
             if user.first_login:
@@ -65,6 +67,13 @@ class UserLogin(MethodView):
             return {"access_token": access_token} # "refresh_token": refresh_token}
         
         abort(401, message="Invalid credentials.")
+
+@users_bp.route("/logout")
+class UserLogout(MethodView):
+    @login_required
+    def post(self):
+        logout_user()
+        return {"message": "Success"}, 200
 
 @users_bp.route("/update_profile")
 class UpdateUserProfile(MethodView):
@@ -109,7 +118,7 @@ class UpdateUserProfile(MethodView):
 
         return user
 
-@users_bp.route("/get_current_user", methods=["GET"])
+@users_bp.route("/get_current_user")
 class GetUserProfile(MethodView):
     @jwt_required()
     def get(self):
@@ -137,7 +146,7 @@ class GetUserProfile(MethodView):
 
         return user_data
     
-@users_bp.route("/profile/<username>", methods=["GET"])
+@users_bp.route("/profile/<username>")
 class UserProfile(MethodView):
     @jwt_required()  # Ensure only authorized users can view profiles
     def get(self, username):
@@ -158,6 +167,7 @@ class UserProfile(MethodView):
 
         # Prepare response data
         user_data = {
+            "id": user.id,
             "first_name": user.first_name,
             "last_name": user.last_name,
             "address": user.address,
@@ -180,4 +190,5 @@ class UserProfile(MethodView):
             "is_current_user": is_current_user,
             "posts": posts_data or "User hasn't made any posts yet."
         })
-    
+
+
