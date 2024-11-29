@@ -1,12 +1,15 @@
 from flask import Flask
+from flask_login import LoginManager, UserMixin, login_required, login_user, current_user, logout_user
 from flask_smorest import Api
 from flask_migrate import Migrate
 from .routes.users import users_bp
 from .routes.posts import bp as posts_bp
+from .routes.friends import friends_bp
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from .services import mail
 from datetime import timedelta
+from .models.user import User
 
 import os
 from .database import db
@@ -22,13 +25,27 @@ def create_app(db_url=None):
     migrate = Migrate(app, db)  # Alembic migrations
     CORS(app, origins="http://localhost:3000")
 
-    #jwt setup
+    # Set a separate secret key for session management
+    app.secret_key = "secret_key_here"
+
+    # jwt setup
     app.config["JWT_SECRET_KEY"] = "secret_key"
     app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=365*100)
     jwt = JWTManager(app)
+
+    # login manager
+    login_manager = LoginManager(app)
+    #login_manager.login_view = "users.UserLogin"
+
+    @login_manager.user_loader
+    def load_user(user_id):
+    # This function will be called to get the user object based on user_id
+        return User.query.get(int(user_id))
+
     
     api.register_blueprint(users_bp)                 # flask-smorest blueprint is in api
     app.register_blueprint(posts_bp, url_prefix="/posts")  # flask blueprint is in app
+    app.register_blueprint(friends_bp)
     return app
 
 def init_swagger(app):

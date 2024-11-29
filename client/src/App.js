@@ -9,12 +9,12 @@ import { Header } from './components/Header/Header';
 
 function App() {
 
-  // TODO
-  // SETUP ROUTER
+
 
   return (
     <div className="bg-dark text-light" style={{minHeight: "100vh"}}>
       <Header/>
+
     </div>
   );
   

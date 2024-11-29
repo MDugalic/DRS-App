@@ -5,7 +5,7 @@ import './styles.css';  // Import the CSS file for styling
 import Button from 'react-bootstrap/Button'; // Importing Button from react-bootstrap
 
 const ProfilePage = () => {
-  const username = 'pera';  // Hardcoded username for now
+  const username = 'qwer';  // Hardcoded username for now
   // const { username } = useParams();  // Uncomment when routing is set up
 
   const [userData, setUserData] = useState(null);
@@ -20,7 +20,7 @@ const ProfilePage = () => {
       return;
     }
 
-    axios.get(`http://localhost:5000/profile/${username}`, {
+    axios.get(`/profile/${username}`, {
       headers: {
         Authorization: `Bearer ${token}`,  // Add JWT token to the request headers
       },
@@ -45,7 +45,13 @@ const ProfilePage = () => {
 
   const handleAddFriend = () => {
     // Add friend logic (e.g., send a POST request to add friend)
-    console.log('Add friend clicked!');
+    axios.post(`/add_friend/${userData.id}`)
+    .then(response => {
+      if (response.data) {
+        console.log(response.data);
+      }
+    }) 
+
   };
 
   if (!userData) return <div>Loading...</div>;  // Wait until the user data is loaded
