@@ -22,3 +22,14 @@ class CreatePostSchema(Schema):
     username = fields.Str(required=True)
     text = fields.Str(required=False)
     image = fields.Str(required=False)
+
+    from marshmallow import Schema, fields
+
+# Schema for adding/removing a friend
+class FriendActionSchema(Schema):
+    friend_id = fields.Int(required=True, description="ID of the friend to add or remove")
+
+# Schema for displaying a user's friend
+class FriendSchema(Schema):
+    id = fields.Int(dump_only=True)
+    username = fields.Str(dump_only=True)

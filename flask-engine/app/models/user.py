@@ -1,6 +1,8 @@
 from app.database import db
+from .friendship import friendship
+from flask_login import UserMixin
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -21,8 +23,26 @@ class User(db.Model):
     posts = db.relationship('Post',
                             back_populates='user',
                             cascade="all, delete-orphan")
+    
+    friends = db.relationship(
+        'User',
+        secondary=friendship,
+        primaryjoin=(friendship.c.user_id == id),
+        secondaryjoin=(friendship.c.friend_id == id),
+        backref=db.backref('friend_of', lazy='dynamic'),
+        lazy='dynamic'
+    )
 
-    #same as public override ToString()
-    #__str__ has the same function, but this is preferred for development
+    def add_friend(self, user):
+        if not self.is_friend(user):
+            self.friends.append(user)
+
+    def remove_friend(self, user):
+        if self.is_friend(user):
+            self.friends.remove(user)
+
+    def is_friend(self, user):
+        return self.friends.filter(friendship.c.friend_id == user.id).count() > 0
+
     def __repr__(self):
         return f"<User: {self.username}>"
