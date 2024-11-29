@@ -1,9 +1,10 @@
+/* eslint-disable jsx-a11y/img-redundant-alt */
 import React, { useRef, useState } from "react";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form'
 import { Tooltip, OverlayTrigger } from 'react-bootstrap';
-import addImageIcon from '../../assets/add_image_icon.png';
-import trashIcon from '../../assets/trash_icon.png';
+import addImageIcon from '../../assets/add_image_icon_white.png';
+import trashIcon from '../../assets/trash_icon_white.png';
 import "./styles.css";
 
 export const CreatePost = () => {
@@ -70,13 +71,15 @@ export const CreatePost = () => {
             <Form className="handleSubmit" onSubmit={handleSubmit}>
                 <div className="create-post-form">
                     <textarea
+                        className="bg-dark text-light"
                         ref={textareaRef}
                         placeholder="What's up?"
                         maxLength={postMaxLength}
-                        style={{ overflow: "hidden", resize: "none" }} // Disable manual resizing
+                        style={{ overflow: "hidden", resize: "none", border: "0px" }} // Disable manual resizing
                         onInput={handleTextareaInput}
                     />
                     <div>
+                        <hr/>
                         {postMaxLength - charCount} characters remaining
                     </div>
                     <div>
@@ -101,12 +104,12 @@ export const CreatePost = () => {
                         overlay={<Tooltip>Add Image</Tooltip>}
                     >
                         <Button 
-                            variant="outline-primary"
+                            variant="primary"
                             onClick={handleAddImageClick}
                         >
                             <img src={addImageIcon} 
                             style={{ maxWidth: "24px"}} 
-                            alt="Add Image" />
+                            alt="Add Image"/>
                         </Button>
                     </OverlayTrigger>
                     <div>
@@ -117,7 +120,7 @@ export const CreatePost = () => {
                                 overlay={<Tooltip>Remove Image</Tooltip>}
                             >
                                 <Button 
-                                    variant="outline-danger"
+                                    variant="danger"
                                     onClick={handleRemoveImageClick}
                                 >
                                     <img src={trashIcon} 

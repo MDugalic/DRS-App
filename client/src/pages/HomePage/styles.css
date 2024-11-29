@@ -1,0 +1,17 @@
+.general {
+    padding-left: 10vw;
+    padding-right: 10vw;
+}
+
+.create-post, .post-list {
+    border: 1px solid gray;
+    border-top: none;
+}
+
+.create-post {
+    padding-top: 10px;
+}
+
+.post-list {
+    height: 100vh;
+}
