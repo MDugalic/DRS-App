@@ -17,7 +17,7 @@ class User(db.Model):
 
     # 'user', 'admin'
     role = db.Column(db.String(20), nullable=False, default="user")
-
+    first_login = db.Column(db.Boolean, default=True)  # Track if this is the user's first login
     posts = db.relationship('Post',
                             back_populates='user',
                             cascade="all, delete-orphan")
