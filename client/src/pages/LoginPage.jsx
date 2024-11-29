@@ -27,7 +27,6 @@ export const LoginPage = () => {
 
                 // Proceed with login success actions
                 console.log("Login successful, token:", response.data.access_token);
-
             }
         } catch (error) {
             console.error("Error sending login data:", error);

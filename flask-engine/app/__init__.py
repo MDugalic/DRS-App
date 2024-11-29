@@ -4,6 +4,7 @@ from flask_smorest import Api
 from flask_migrate import Migrate
 from .routes.users import users_bp
 from .routes.posts import bp as posts_bp
+from .routes.friends import friends_bp
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from .services import mail
@@ -34,7 +35,7 @@ def create_app(db_url=None):
 
     # login manager
     login_manager = LoginManager(app)
-    login_manager.login_view = "login"
+    #login_manager.login_view = "users.UserLogin"
 
     @login_manager.user_loader
     def load_user(user_id):
@@ -44,6 +45,7 @@ def create_app(db_url=None):
     
     api.register_blueprint(users_bp)                 # flask-smorest blueprint is in api
     app.register_blueprint(posts_bp, url_prefix="/posts")  # flask blueprint is in app
+    app.register_blueprint(friends_bp)
     return app
 
 def init_swagger(app):
