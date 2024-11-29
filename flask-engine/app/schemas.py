@@ -12,6 +12,9 @@ class UserSchema(Schema):
     username = fields.Str(required=True)
     password = fields.Str(required=True)
 
+class UserSchemaWithId(UserSchema):
+    id = fields.Int(required=True)
+
 class UserLoginSchema(Schema):
     username = fields.Str(required=True)
     password = fields.Str(required=True)

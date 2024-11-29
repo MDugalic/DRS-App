@@ -146,6 +146,7 @@ class UserProfile(MethodView):
 
         # Prepare response data
         user_data = {
+            "id": user.id,
             "first_name": user.first_name,
             "last_name": user.last_name,
             "address": user.address,
