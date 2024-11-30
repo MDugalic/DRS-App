@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-// import { useParams } from 'react-router-dom'; // To capture the username from the URL
+import { useParams, Link } from 'react-router-dom'; // To capture the username from the URL
 import './styles.css';  // Import the CSS file for styling
 import Button from 'react-bootstrap/Button'; // Importing Button from react-bootstrap
+import { FaPencilAlt } from 'react-icons/fa'; // Importing FontAwesome Pencil icon
 
 const ProfilePage = () => {
-  const username = 'qwer';  // Hardcoded username for now
-  // const { username } = useParams();  // Uncomment when routing is set up
+  const { username } = useParams();  // Capture the username from the URL
 
   const [userData, setUserData] = useState(null);
   const [posts, setPosts] = useState([]);  // Defaulting to an empty array
@@ -51,25 +51,35 @@ const ProfilePage = () => {
         console.log(response.data);
       }
     }) 
-
   };
 
   if (!userData) return <div>Loading...</div>;  // Wait until the user data is loaded
 
   return (
     <div className="profile-page">
-      <div className="user-info">
-        <h1 style={{ fontWeight: 'bold', fontSize: '32px' }}>{userData.username}</h1>
-        <p><strong>First Name:</strong> {userData.first_name}</p>
-        <p><strong>Last Name:</strong> {userData.last_name}</p>
-        <p><strong>Address:</strong> {userData.address}</p>
-        <p><strong>City:</strong> {userData.city}</p>
-        <p><strong>Country:</strong> {userData.country}</p>
-        <p><strong>Phone:</strong> {userData.phone_number}</p>
-        <p><strong>Email:</strong> {userData.email}</p>
+      <div className="profile-header">
+        <div className="user-info">
+          <h1 style={{ fontWeight: 'bold', fontSize: '32px' }}>{userData.username}</h1>
+          <p><strong>First Name:</strong> {userData.first_name}</p>
+          <p><strong>Last Name:</strong> {userData.last_name}</p>
+          <p><strong>Address:</strong> {userData.address}</p>
+          <p><strong>City:</strong> {userData.city}</p>
+          <p><strong>Country:</strong> {userData.country}</p>
+          <p><strong>Phone:</strong> {userData.phone_number}</p>
+          <p><strong>Email:</strong> {userData.email}</p>
 
-        {!isCurrentUser && (
-          <Button id="add-friend-btn" variant="primary" onClick={handleAddFriend}>Add Friend</Button>  // Primary button style
+          {!isCurrentUser && (
+            <Button id="add-friend-btn" variant="primary" onClick={handleAddFriend}>Add Friend</Button>  // Primary button style
+          )}
+        </div>
+
+        {/* Edit icon only shown if the logged-in user is viewing their own profile */}
+        {isCurrentUser && (
+          <div className="edit-icon">
+            <Link to="/update" style={{ textDecoration: 'none' }}>
+              <FaPencilAlt size={24} style={{ cursor: 'pointer', color: 'gray' }} />
+            </Link>
+          </div>
         )}
       </div>
 

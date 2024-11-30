@@ -18,8 +18,12 @@ const router = createBrowserRouter([
     element: <LoginPage />,
   },
   {
-    path:"/profile",
+    path:"/profile/:username",
     element: <ProfilePage />
+  },
+  {
+    path:"/update",
+    element: <UpdateUserPage />
   }
 ]);
 
