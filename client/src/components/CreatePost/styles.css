@@ -1,9 +1,10 @@
-.create-post-container {
+.create-post-container, .create-post-form  {
     display: flex;
-    flex-direction: row;
-    max-height: 20vh;
+    flex-direction: column;
+    padding-left: 5px;
+    padding-right: 5px;
 }
-
+/*TODO: Add max-width that works in relation top HomePage*/
 .create-post-form {
     display: flex;
     flex-direction: column;

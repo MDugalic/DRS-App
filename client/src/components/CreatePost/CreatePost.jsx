@@ -67,7 +67,7 @@ export const CreatePost = () => {
     };
 
     return (
-        <div className="create-post-form">
+        <div className="create-post-container">
             <Form className="handleSubmit" onSubmit={handleSubmit}>
                 <div className="create-post-form">
                     <textarea

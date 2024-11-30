@@ -5,7 +5,7 @@ from flask_login import UserMixin
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, unique=True, primary_key=True, nullable=False)
     first_name = db.Column(db.String(50), nullable=False)
     last_name = db.Column(db.String(50), nullable=False)
     address = db.Column(db.String(100))
@@ -30,7 +30,8 @@ class User(UserMixin, db.Model):
         primaryjoin=(friendship.c.user_id == id),   # c - column
         secondaryjoin=(friendship.c.friend_id == id),
         backref=db.backref('friend_of', lazy='dynamic'),
-        lazy='dynamic'
+        lazy='dynamic'  # This makes friends a query object, meaning we can filter the list like using LINQ, but we can't access the data directly
+                        # We need to use user.friends.all()
     )
 
     def add_friend(self, user):
@@ -45,4 +46,4 @@ class User(UserMixin, db.Model):
         return self.friends.filter(friendship.c.friend_id == user.id).count() > 0
 
     def __repr__(self):
-        return f"<User: {self.username}>"
+        return f"<User: {self.id} -  {self.username}>"

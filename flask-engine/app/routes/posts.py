@@ -2,6 +2,7 @@ import os
 from werkzeug.utils import secure_filename
 from flask import request, Blueprint, jsonify
 from app.models import Post
+from app.models import User
 from app.database import db
 
 bp = Blueprint("posts", __name__)
@@ -43,7 +44,7 @@ def create_post():
     return {"message": "Post created successfully."}, 201
 
 @bp.route('/get', methods=['GET'])
-def get_post():
+def get_posts_of_user():
     user_id = request.form.get('user_id')
     # should be implemented using session object:
     # user_id = session.get('user_id')
@@ -69,7 +70,28 @@ def get_post():
 
     return jsonify(posts_list), 200
 
+@bp.route('/get-friends', methods=['GET'])
+def get_posts_of_friends():
+    user_id = request.args.get('user_id')
+    if not user_id:
+        return {"message": "Bad request"}, 400
+    user = User.query.get_or_404(user_id)
+    friends_list = user.friends.all()
+    posts_by_all_friends = []
     
+    # Collect posts from all friends
+    for friend in friends_list:
+        # Extract the posts for the current friend
+        friend_posts = [{
+            'id': post.id,
+            'text': post.text,
+            'image_path': post.image_path,
+            'approved': post.approved
+        } for post in friend.posts]
+        
+        posts_by_all_friends.extend(friend_posts)  # Combine all friend's posts into the main list
+    return jsonify(posts_by_all_friends)
+
 @bp.route('/edit', methods=['PUT'])
 def edit_post():
     post_id = request.form.get('id')
