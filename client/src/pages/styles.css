@@ -45,3 +45,35 @@ hr {
 .posts-section {
     margin-top: 20px;
 }
+
+.profile-header {
+    display: flex;
+    /* Arrange user-info and edit-icon side by side */
+    align-items: flex-start;
+    /* Align items at the top */
+    gap: 10px;
+    /* Space between user-info and icon */
+}
+
+.user-info {
+    display: inline-block;
+    /* Let it take only as much space as it needs */
+    padding: 10px;
+    /* Optional: Add some padding for better visuals */
+    /* Optional: Add a border to visualize the container */
+}
+
+.edit-icon {
+    display: flex;
+    /* Ensure icon stays centered */
+    align-items: center;
+    /* Align vertically */
+    justify-content: center;
+    /* Align horizontally if needed */
+    padding: 5px;
+    /* Optional: Add some padding */
+}
+
+.edit-icon Link {
+    display: block;
+}

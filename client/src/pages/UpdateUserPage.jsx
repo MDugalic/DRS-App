@@ -5,6 +5,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import './styles.css';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 export const UpdateUserPage = () => {
   const [formData, setFormData] = useState({
@@ -20,7 +21,7 @@ export const UpdateUserPage = () => {
   });
 
   const [errors, setErrors] = useState({});
-
+  const navigate = useNavigate();
   // Fetch the logged-in user's data when the component mounts
   useEffect(() => {
     // Clear any autofilled values
@@ -112,6 +113,7 @@ export const UpdateUserPage = () => {
         }
       });
       console.log('Profile updated successfully:', response.data);
+      navigate(`/profile/${formData.username}`);
       // Redirect, show success message, or clear the form here
     } catch (error) {
       console.error('There was an error updating the profile:', error);

@@ -20,6 +20,10 @@ const router = createBrowserRouter([
   {
     path:"/profile/:username",
     element: <ProfilePage />
+  },
+  {
+    path:"/update",
+    element: <UpdateUserPage />
   }
 ]);
 
