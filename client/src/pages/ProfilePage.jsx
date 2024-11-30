@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-// import { useParams } from 'react-router-dom'; // To capture the username from the URL
+import { useParams } from 'react-router-dom'; // To capture the username from the URL
 import './styles.css';  // Import the CSS file for styling
 import Button from 'react-bootstrap/Button'; // Importing Button from react-bootstrap
 
 const ProfilePage = () => {
-  const username = 'qwer';  // Hardcoded username for now
-  // const { username } = useParams();  // Uncomment when routing is set up
+  // const username = 'qwer';  // Hardcoded username for now
+  const { username } = useParams();  // Uncomment when routing is set up
 
   const [userData, setUserData] = useState(null);
   const [posts, setPosts] = useState([]);  // Defaulting to an empty array
