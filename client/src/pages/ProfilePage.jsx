@@ -4,6 +4,7 @@ import { useParams, Link } from 'react-router-dom'; // To capture the username f
 import './styles.css';  // Import the CSS file for styling
 import Button from 'react-bootstrap/Button'; // Importing Button from react-bootstrap
 import { FaPencilAlt } from 'react-icons/fa'; // Importing FontAwesome Pencil icon
+import { Header } from '../components/Header/Header'
 
 const ProfilePage = () => {
   const { username } = useParams();  // Capture the username from the URL
@@ -56,6 +57,8 @@ const ProfilePage = () => {
   if (!userData) return <div></div>;  // Wait until the user data is loaded
 
   return (
+    <>
+    <Header></Header>
     <div className="profile-page">
       <div className="profile-header">
         <div className="user-info">
@@ -100,6 +103,7 @@ const ProfilePage = () => {
         )}
       </div>
     </div>
+    </>
   );
 };
 

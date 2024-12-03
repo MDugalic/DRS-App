@@ -3,7 +3,7 @@ import './styles.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Navbar, Nav } from "react-bootstrap";
 import { FaHome, FaSearch, FaBell } from 'react-icons/fa';
-import { CgProfile } from "react-icons/cg";
+import { CgProfile, CgLogOut } from "react-icons/cg";
 import axios from "axios";
 
 export const Header = () => {
@@ -32,6 +32,10 @@ export const Header = () => {
       });
   }, []);
 
+  const handleLogout = () => {
+    localStorage.removeItem("access_token"); // Remove the token from localStorage
+  };
+
   return (
     <Navbar bg="dark" data-bs-theme="dark" className="p-3">
       <Navbar.Brand href="#home">My App</Navbar.Brand>
@@ -50,6 +54,9 @@ export const Header = () => {
             <CgProfile />
           </Nav.Link>
         )}
+        <Nav.Link href="/login" onClick={handleLogout}>
+          <CgLogOut />
+        </Nav.Link>
       </Nav>
     </Navbar>
   );

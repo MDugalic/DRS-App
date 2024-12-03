@@ -3,7 +3,7 @@ import axios from 'axios';
 import { CreatePost } from "../../components/CreatePost/CreatePost";
 import './styles.css';
 import { DisplayPost } from "../../components/DisplayPost/DisplayPost";
-
+import { Header } from '../../components/Header/Header'
 
 
 
@@ -27,6 +27,7 @@ export const HomePage = () => {
     }, [])
 
     return(
+        <><Header></Header>
     <div>
         <div className="general">
             <div className="create-post">
@@ -44,5 +45,6 @@ export const HomePage = () => {
         </div>
 
     </div>
+    </>
     )
 }
