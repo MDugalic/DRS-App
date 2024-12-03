@@ -5,9 +5,12 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import './styles.css';
 import axios from 'axios';
+import { Header } from '../components/Header/Header'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const CreateUserPage = () => {
-  const [formData, setFormData] = useState({
+  const initialFormData = {
     first_name: '',
     last_name: '',
     address: '',
@@ -17,8 +20,9 @@ export const CreateUserPage = () => {
     email: '',
     username: '',
     password: '',
-  });
+  };
 
+  const [formData, setFormData] = useState(initialFormData);
   const [errors, setErrors] = useState({});
 
   const isValidInput = (name, value) => {
@@ -71,8 +75,18 @@ export const CreateUserPage = () => {
           'Content-Type': 'application/json'
         }
       });
+      toast.success(`Successfully registered ${formData.username}`, {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "dark", // Matches your dark theme
+      });
       console.log('User registered successfully:', response.data);
       // Redirect, show success message, or clear the form here
+      setFormData(initialFormData);
     } catch (error) {
       console.error('There was an error registering the user:', error);
       if (error.response) {
@@ -87,6 +101,7 @@ export const CreateUserPage = () => {
   };
 
   return (
+    <><Header></Header>
     <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh' }}>
       <div>
         <h1 className="text-center mb-4">Register a new user</h1>
@@ -243,5 +258,7 @@ export const CreateUserPage = () => {
         </Form>
       </div>
     </div>
+    <ToastContainer />
+    </>
   );
 };

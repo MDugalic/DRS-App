@@ -2,21 +2,16 @@ import React, { useEffect, useState } from "react";
 import './styles.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Navbar, Nav } from "react-bootstrap";
-import { FaHome, FaSearch, FaBell } from 'react-icons/fa';
+import { FaHome, FaSearch, FaBell, FaUserPlus } from 'react-icons/fa';
 import { CgProfile, CgLogOut } from "react-icons/cg";
 import axios from "axios";
 
 export const Header = () => {
-  const [username, setUsername] = useState(null);
+  const [role, setRole] = useState(null);
+  const [username, setUsername] = useState("");
 
   useEffect(() => {
-    // Fetch current user data from the server
     const token = localStorage.getItem("access_token");
-
-    if (!token) {
-      console.error("No token found. Cannot fetch user data.");
-      return;
-    }
 
     axios
       .get("/get_current_user", {
@@ -25,15 +20,17 @@ export const Header = () => {
         },
       })
       .then((response) => {
-        setUsername(response.data.username); // Set the username from the response
+        const { role, username } = response.data;
+        setRole(role); // Store role (e.g., "admin" or "user")
+        setUsername(username); // Store username for profile link
       })
       .catch((error) => {
-        console.error("Error fetching current user:", error);
+        console.error("Error fetching user data:", error);
       });
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("access_token"); // Remove the token from localStorage
+    localStorage.removeItem("access_token"); // Clear token
   };
 
   return (
@@ -44,14 +41,17 @@ export const Header = () => {
           <FaHome />
         </Nav.Link>
         <Nav.Link href="#search">
-          <FaSearch /> {/* Search icon */}
+          <FaSearch />
         </Nav.Link>
         <Nav.Link href="#notifications">
-          <FaBell /> {/* Notifications icon */}
+          <FaBell />
         </Nav.Link>
-        {username && (
-          <Nav.Link href={`/profile/${username}`}>
-            <CgProfile />
+        <Nav.Link href={`/profile/${username}`}>
+          <CgProfile />
+        </Nav.Link>
+        {role === "admin" && ( // Show only if the user is an admin
+          <Nav.Link href="/register">
+            <FaUserPlus />
           </Nav.Link>
         )}
         <Nav.Link href="/login" onClick={handleLogout}>

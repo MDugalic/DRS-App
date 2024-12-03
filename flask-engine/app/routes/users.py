@@ -130,7 +130,6 @@ class GetUserProfile(MethodView):
 
         if not user:
             abort(404, message="User not found.")
-        
         # Return only the necessary fields (to match frontend expectations)
         user_data = {
             "first_name": user.first_name,
@@ -142,6 +141,7 @@ class GetUserProfile(MethodView):
             "email": user.email,
             "username": user.username,
             "password": user.password,
+            "role": user.role
         }
 
         return user_data
