@@ -45,7 +45,13 @@ hr {
 .posts-section {
     margin-top: 20px;
 }
-
+.profile-page{
+    margin-left: 20vw;
+    margin-right: 20vw;
+    border: 1px solid gray;
+    border-top: none;
+    border-bottom: none;
+}
 .profile-header {
     display: flex;
     /* Arrange user-info and edit-icon side by side */
