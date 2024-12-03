@@ -53,7 +53,7 @@ const ProfilePage = () => {
     }) 
   };
 
-  if (!userData) return <div>Loading...</div>;  // Wait until the user data is loaded
+  if (!userData) return <div></div>;  // Wait until the user data is loaded
 
   return (
     <div className="profile-page">
