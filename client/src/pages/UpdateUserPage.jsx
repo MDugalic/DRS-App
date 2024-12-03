@@ -6,6 +6,7 @@ import Col from 'react-bootstrap/Col';
 import './styles.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { Header } from '../components/Header/Header'
 
 export const UpdateUserPage = () => {
   const [formData, setFormData] = useState({
@@ -126,6 +127,7 @@ export const UpdateUserPage = () => {
   };
 
   return (
+    <><Header></Header>
     <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh' }}>
       <div>
         <h1 className="text-center mb-4">Update your profile</h1>
@@ -285,5 +287,6 @@ export const UpdateUserPage = () => {
         </Form>
       </div>
     </div>
+    </>
   );
 };
