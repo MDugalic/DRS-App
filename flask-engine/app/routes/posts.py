@@ -4,6 +4,8 @@ from flask import request, Blueprint, jsonify
 from app.models import Post
 from app.models import User
 from app.database import db
+from flask_jwt_extended import jwt_required, get_jwt_identity
+
 
 bp = Blueprint("posts", __name__)
 
@@ -139,12 +141,21 @@ def edit_post():
 # We need additional authorization
 # Don't know if <id> should be passed in the URL
 @bp.route('/delete/<id>', methods=['DELETE'])
+@jwt_required()
 def delete_post(id):
-    if not id:
-        return {"message": "Post ID is required."}, 400
+    # Authenticate user
+    user_id = int(get_jwt_identity())
+    if not user_id:
+        return {"message": "Unauthorized. Please log in."}, 401
 
+    # Fetch the post to delete using UUID
     post = Post.query.get_or_404(id)
-    
+
+    # Authorization: Check if the logged-in user owns the post
+    if post.user_id != user_id:
+        return {"message": "Forbidden. You do not have permission to delete this post."}, 403
+
+    # Proceed with deletion
     db.session.delete(post)
     db.session.commit()
     return {"message": "Post deleted successfully."}, 200
