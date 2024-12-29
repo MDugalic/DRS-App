@@ -139,9 +139,9 @@ def is_friend(user_id):
     return jsonify({"is_friend": is_friend}), 200
 
 
-@friends_bp.route('/list_all', methods=['GET'])
+@friends_bp.route('/get_all', methods=['GET'])
 @jwt_required()
-def list_friends():
+def get_all():
     current_user_id = get_jwt_identity()
     current_user = User.query.get(current_user_id)
     friends = current_user.friends.all()  # Make sure you have the relationship set up
