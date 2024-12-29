@@ -9,13 +9,13 @@ export const NotificationWindow = ({ isVisible }) => {
     // Fetch notifications only when the popup is visible
     if (isVisible) {
       axios
-        .get("/get_notifications") // Replace with your API endpoint
+        .get("/get_requests") // Replace with your API endpoint
         .then((response) => {
           setNotifications(response.data);
           setLoading(false);
         })
         .catch((error) => {
-          console.error("Error fetching notifications:", error);
+          console.error("Error fetching friend requests:", error);
           setLoading(false);
         });
     }
