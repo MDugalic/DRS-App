@@ -98,7 +98,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/test",
+    path: "/notifications",
     element: (
       <NotificationWindow isVisible={true}/>
     )

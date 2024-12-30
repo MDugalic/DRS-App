@@ -1,6 +1,7 @@
 .general {
     padding-left: 20vw;
     padding-right: 20vw;
+    margin-top: 72px;
 }
 
 .create-post, .post-list {

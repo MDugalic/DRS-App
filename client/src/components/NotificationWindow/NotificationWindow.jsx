@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { SingleRequest } from "../SingleRequest/SingleRequest";
+import './styles.css';
 export const NotificationWindow = ({ isVisible }) => {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -27,19 +28,28 @@ export const NotificationWindow = ({ isVisible }) => {
     }
   }, [isVisible]);
 
+  const updateNotifications = (id) => {
+    setNotifications((prevNotifications) => 
+      prevNotifications.filter(notification => notification.id !== id)
+    );
+  };
+  
   if (!isVisible) return null;
-
+  
   return (
     <div className="notification-window">
       {loading ? (
         <p>Loading...</p>
       ) : notifications.length === 0 ? (
-        <p>No notifications available.</p>
+        <p>&nbsp;No notifications yet.&nbsp;</p>
       ) : (
         <ul>
           {notifications.map((notification, index) => (
             <SingleRequest 
+              key={notification.id}
+              id={notification.id}
               username={notification.username}
+              onUpdate={updateNotifications}
             />
           ))}
         </ul>

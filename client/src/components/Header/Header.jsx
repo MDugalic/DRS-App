@@ -1,18 +1,19 @@
-import React, { useEffect, useState } from "react";
-import './styles.css';
+import React, { useEffect, useState, useRef } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Navbar, Nav } from "react-bootstrap";
 import { FaHome, FaSearch, FaBell, FaUserPlus } from 'react-icons/fa';
 import { CgProfile, CgLogOut } from "react-icons/cg";
 import axios from "axios";
+import { NotificationWindow } from "../NotificationWindow/NotificationWindow";
 
 export const Header = () => {
   const [role, setRole] = useState(null);
   const [username, setUsername] = useState("");
+  const [showNotifications, setShowNotifications] = useState(false); // State to toggle notification window
+  const notificationRef = useRef(null);
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
-
     axios
       .get("/get_current_user", {
         headers: {
@@ -33,31 +34,62 @@ export const Header = () => {
     localStorage.removeItem("access_token"); // Clear token
   };
 
+  const toggleNotifications = (event) => {
+    event.stopPropagation();
+    setShowNotifications((prev) => !prev); // Toggle the visibility state
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (notificationRef.current && !notificationRef.current.contains(event.target)) {
+        setShowNotifications(false);
+      }
+    };
+  
+    if (showNotifications) {
+      document.addEventListener("click", handleClickOutside);
+    }
+  
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [showNotifications]);
+  
   return (
-    <Navbar bg="dark" data-bs-theme="dark" className="p-3">
-      <Navbar.Brand href="#home">My App</Navbar.Brand>
-      <Nav className="ml-auto">
-        <Nav.Link href="/">
-          <FaHome />
-        </Nav.Link>
-        <Nav.Link href="#search">
-          <FaSearch />
-        </Nav.Link>
-        <Nav.Link href="#notifications">
-          <FaBell />
-        </Nav.Link>
-        <Nav.Link href={`/profile/${username}`}>
-          <CgProfile />
-        </Nav.Link>
-        {role === "admin" && ( // Show only if the user is an admin
-          <Nav.Link href="/register">
-            <FaUserPlus />
+    <div style={{ position: "fixed", top: 0, width: "100%" }}>
+      <Navbar bg="dark" data-bs-theme="dark" className="p-3">
+        <Navbar.Brand href="/">My App</Navbar.Brand>
+        <Nav className="ml-auto">
+          <Nav.Link href="/">
+            <FaHome />
           </Nav.Link>
-        )}
-        <Nav.Link href="/login" onClick={handleLogout}>
-          <CgLogOut />
-        </Nav.Link>
-      </Nav>
-    </Navbar>
+          <Nav.Link href="#search">
+            <FaSearch />
+          </Nav.Link>
+          <Nav.Link onClick={toggleNotifications}>
+            <FaBell />
+          </Nav.Link>
+          <Nav.Link href={`/profile/${username}`}>
+            <CgProfile />
+          </Nav.Link>
+          {role === "admin" && ( // Show only if the user is an admin
+            <Nav.Link href="/register">
+              <FaUserPlus />
+            </Nav.Link>
+          )}
+          <Nav.Link href="/login" onClick={handleLogout}>
+            <CgLogOut />
+          </Nav.Link>
+        </Nav>
+      </Navbar>
+
+      {/* Render the NotificationWindow */}
+      {showNotifications && (
+      <div ref={notificationRef}>
+        <NotificationWindow isVisible={showNotifications} />
+      </div>
+)}
+
+    </div>
   );
 };

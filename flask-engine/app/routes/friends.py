@@ -62,7 +62,7 @@ def get_requests():
 def accept_request(friend_id):
     current_user_id = get_jwt_identity()
 
-    # Update the friend request status to 'ACCEPTED'
+    # Find the friend request to accept
     request = db.session.query(friendship).filter_by(
         user_id=friend_id,
         friend_id=current_user_id,
@@ -72,6 +72,7 @@ def accept_request(friend_id):
     if not request:
         return jsonify({"message": "No friend request found."}), 404
 
+    # Update the friend request status to 'ACCEPTED'
     db.session.execute(
         friendship.update()
         .where(friendship.c.user_id == friend_id, friendship.c.friend_id == current_user_id)
@@ -87,7 +88,7 @@ def accept_request(friend_id):
 def reject_request(friend_id):
     current_user_id = get_jwt_identity()
 
-    # Delete the friend request
+    # Find the friend request to reject
     request = db.session.query(friendship).filter_by(
         user_id=friend_id,
         friend_id=current_user_id,
@@ -97,6 +98,7 @@ def reject_request(friend_id):
     if not request:
         return jsonify({"message": "No friend request found."}), 404
 
+    # Delete the friend request
     db.session.execute(
         friendship.delete().where(
             friendship.c.user_id == friend_id, friendship.c.friend_id == current_user_id
@@ -113,11 +115,29 @@ def remove_friend(friend_id):
     current_user_id = get_jwt_identity()
     user = User.query.get_or_404(friend_id)
 
-    if user:
-        current_user = User.query.get(current_user_id)  # Get the current user object
-        current_user.remove_friend(user)  # Ensure you have this method implemented
-        db.session.commit()
-        return jsonify({"message": f"{user.username} removed from friends."}), 200
+    # Check if the current user is friends with the user to be removed
+    friendship = db.session.query(friendship).filter(
+        (friendship.c.user_id == current_user_id) & 
+        (friendship.c.friend_id == friend_id) &
+        (friendship.c.is_accepted == True)  # Ensure the friendship is accepted
+    ).first()
+
+    if not friendship:
+        return jsonify({"message": f"You are not friends with {user.username}."}), 404
+    
+    current_user = User.query.get(current_user_id)
+    current_user.remove_friend(user)                # User model method
+
+    # If friendship exists, remove it
+    db.session.execute(
+        friendship.delete().where(
+            (friendship.c.user_id == current_user_id) &
+            (friendship.c.friend_id == friend_id)
+        )
+    )
+    db.session.commit()
+
+    return jsonify({"message": f"{user.username} removed from friends."}), 200
 
 @friends_bp.route('/is_friend/<int:user_id>', methods=['GET'])
 @jwt_required()

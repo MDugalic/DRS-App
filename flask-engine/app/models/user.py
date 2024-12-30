@@ -41,6 +41,9 @@ class User(UserMixin, db.Model):
     def remove_friend(self, user):
         if self.is_friend(user):
             self.friends.remove(user)
+            db.session.commit()
+            return True
+        return False
 
     def is_friend(self, user):
         return self.friends.filter(friendship.c.friend_id == user.id).count() > 0

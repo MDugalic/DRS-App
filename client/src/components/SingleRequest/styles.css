@@ -1,7 +1,9 @@
 .request-container {
     border-top: solid 1px gray;
     width: fit-content;
-    padding: 10px;
+    background-color: #212529;
+    padding: 5px;
+    padding-bottom: 10px;
 }
 
 .username-container {
@@ -25,4 +27,10 @@
     padding-right: 5px;
     border: solid 1px gray;
     cursor: pointer;
+    background-color: #212529;
+    color: white;
+}
+
+.button:hover {
+    background-color: gray;
 }

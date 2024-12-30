@@ -79,6 +79,7 @@ export const CreatePost = () => {
                         onInput={handleTextareaInput}
                     />
                     <div>
+                        {/* TODO: Fix hr z-index. Currently hr is on top of everything*/}
                         <hr/>
                         {postMaxLength - charCount} characters remaining
                     </div>
