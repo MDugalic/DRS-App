@@ -6,6 +6,7 @@ import { LoginPage } from './pages/LoginPage';
 import { UpdateUserPage } from './pages/UpdateUserPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { CreateUserPage } from './pages/CreateUserPage';
+import { NotificationWindow } from './components/NotificationWindow/NotificationWindow';
 import axios from 'axios';
 
 // Dummy function to check if the user is authenticated
@@ -96,6 +97,12 @@ const router = createBrowserRouter([
       </AdminRoute>
     ),
   },
+  {
+    path: "/test",
+    element: (
+      <NotificationWindow isVisible={true}/>
+    )
+  }
 ]);
 
 function App() {

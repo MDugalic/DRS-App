@@ -54,7 +54,7 @@ def get_requests():
         if user:
             requests_list.append({"id": user.id, "username": user.username})
 
-    return jsonify({"requests": requests_list}), 200
+    return jsonify( requests_list), 200
 
 
 @friends_bp.route('/accept_request/<int:friend_id>', methods=['POST'])
