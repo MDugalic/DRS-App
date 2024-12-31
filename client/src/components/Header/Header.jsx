@@ -4,12 +4,15 @@ import { Navbar, Nav } from "react-bootstrap";
 import { FaHome, FaSearch, FaBell, FaUserPlus } from 'react-icons/fa';
 import { CgProfile, CgLogOut } from "react-icons/cg";
 import axios from "axios";
+import './styles.css';
 import { NotificationWindow } from "../NotificationWindow/NotificationWindow";
 
 export const Header = () => {
   const [role, setRole] = useState(null);
   const [username, setUsername] = useState("");
   const [showNotifications, setShowNotifications] = useState(false); // State to toggle notification window
+  const [hasNotifications, setHasNotifications] = useState(false); // State to indicate notifications
+
   const notificationRef = useRef(null);
 
   useEffect(() => {
@@ -30,6 +33,25 @@ export const Header = () => {
       });
   }, []);
 
+  // Red badge for Notification icon
+  // TODO(mby?): Add notifitaion count inside the badge 
+  useEffect(() => {
+    const token = localStorage.getItem('access_token');
+    axios
+      .get("/friends/get_request_count", {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      .then((response) => {
+        setHasNotifications(response.data.count > 0);
+      })
+      .catch((error) => {
+        console.error("Error fetching notification count:", error);
+      });
+  }, []);
+
+  
   const handleLogout = () => {
     localStorage.removeItem("access_token"); // Clear token
   };
@@ -39,6 +61,7 @@ export const Header = () => {
     setShowNotifications((prev) => !prev); // Toggle the visibility state
   };
 
+  // Close the notification window when clicking outside, on empty space
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (notificationRef.current && !notificationRef.current.contains(event.target)) {
@@ -68,6 +91,9 @@ export const Header = () => {
           </Nav.Link>
           <Nav.Link onClick={toggleNotifications}>
             <FaBell />
+            {hasNotifications && (
+              <span className="notifications-badge"></span>
+            )}
           </Nav.Link>
           <Nav.Link href={`/profile/${username}`}>
             <CgProfile />

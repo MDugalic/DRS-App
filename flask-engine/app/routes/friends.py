@@ -56,6 +56,17 @@ def get_requests():
 
     return jsonify( requests_list), 200
 
+# Count pending friend requests for the current user, used in the header on frontend
+@friends_bp.route('/get_request_count', methods=['GET'])
+@jwt_required()
+def get_request_count():
+    current_user_id = get_jwt_identity()
+    count = db.session.query(friendship).filter_by(
+        friend_id=current_user_id,
+        is_accepted=False
+    ).count()
+    
+    return jsonify({"count": count}), 200
 
 @friends_bp.route('/accept_request/<int:friend_id>', methods=['POST'])
 @jwt_required()
