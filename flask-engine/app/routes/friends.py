@@ -127,13 +127,13 @@ def remove_friend(friend_id):
     user = User.query.get_or_404(friend_id)
 
     # Check if the current user is friends with the user to be removed
-    friendship = db.session.query(friendship).filter(
+    friendship_record = db.session.query(friendship).filter(
         (friendship.c.user_id == current_user_id) & 
         (friendship.c.friend_id == friend_id) &
         (friendship.c.is_accepted == True)  # Ensure the friendship is accepted
     ).first()
 
-    if not friendship:
+    if not friendship_record:
         return jsonify({"message": f"You are not friends with {user.username}."}), 404
     
     current_user = User.query.get(current_user_id)
@@ -156,14 +156,12 @@ def is_friend(user_id):
     current_user_id = get_jwt_identity()
 
     # Fetch the user to check against
-    target_user = User.query.get(user_id)
-    if not target_user:
-        return jsonify({"message": "User not found"}), 404
+    target_user = User.query.get_or_404(user_id)
 
-    # Check if the current user is friends with the target user
+    # Check if the current user is friends with the target user in either direction
     is_friend = db.session.query(friendship).filter(
-        friendship.c.friend_id == user_id,
-        friendship.c.user_id == current_user_id,
+        ((friendship.c.user_id == current_user_id) & (friendship.c.friend_id == user_id)) |
+        ((friendship.c.user_id == user_id) & (friendship.c.friend_id == current_user_id)),
         friendship.c.is_accepted == True
     ).count() > 0
 
@@ -177,3 +175,30 @@ def get_all():
     current_user = User.query.get(current_user_id)
     friends = current_user.friends.all()  # Make sure you have the relationship set up
     return jsonify([{"id": friend.id, "username": friend.username} for friend in friends])
+
+# New method to track friend request status
+@friends_bp.route('/request_status/<int:friend_id>', methods=['GET'])
+@jwt_required()
+def request_status(friend_id):
+    current_user_id = get_jwt_identity()
+
+    # Check if the user has sent a request to the friend
+    sent_request = db.session.query(friendship).filter_by(
+        user_id=current_user_id,
+        friend_id=friend_id
+    ).first()
+
+    # Check if the friend has sent a request to the user
+    received_request = db.session.query(friendship).filter_by(
+        user_id=friend_id,
+        friend_id=current_user_id
+    ).first()
+
+    if sent_request and sent_request.is_accepted:
+        return jsonify({"status": "accepted"}), 200
+    elif sent_request and not sent_request.is_accepted:
+        return jsonify({"status": "pending"}), 200
+    elif received_request and not received_request.is_accepted:
+        return jsonify({"status": "received"}), 200
+    else:
+        return jsonify({"status": "not friends"}), 200
