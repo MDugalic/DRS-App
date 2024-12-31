@@ -27,24 +27,25 @@ export const HomePage = () => {
     }, [])
 
     return(
-        <><Header></Header>
-    <div>
-        <div className="general">
-            <div className="create-post">
-                <CreatePost/>
-            </div>
-            <div className="post-list">
-                {posts.length > 0 ? (
-                    posts.map((post) => (
-                        <DisplayPost id={post.id} text={post.text} image_path={post.image_path}/>
-                    ))
-                ) : (
-                    <p>No posts available</p>
-                )}
-            </div>
-        </div>
+        <>
+            <Header/>
+            <div>
+                <div className="general">
+                    <div className="create-post">
+                        <CreatePost/>
+                    </div>
+                    <div className="post-list">
+                        {posts.length > 0 ? (
+                            posts.map((post) => (
+                                <DisplayPost id={post.id} text={post.text} image_path={post.image_path}/>
+                            ))
+                        ) : (
+                            <p>No posts available</p>
+                        )}
+                    </div>
+                </div>
 
-    </div>
-    </>
+            </div>
+        </>
     )
 }

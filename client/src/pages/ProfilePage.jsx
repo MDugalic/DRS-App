@@ -12,53 +12,131 @@ const ProfilePage = () => {
   const [userData, setUserData] = useState(null);
   const [posts, setPosts] = useState([]);  // Defaulting to an empty array
   const [isCurrentUser, setIsCurrentUser] = useState(false);
+  const [isFriend, setIsFriend] = useState(false);  // Track friendship status
+  const [requestStatus, setRequestStatus] = useState(null); // Track the status of the friend request
+  const [loading, setLoading] = useState(true); // Track loading state
 
+
+  // Load user data and posts
   useEffect(() => {
-    const token = localStorage.getItem('access_token');  // Assuming the token is stored in localStorage after login
+    const token = localStorage.getItem('access_token');
 
     if (!token) {
       console.error('No token found, unable to fetch user data');
       return;
     }
 
-    axios.get(`/profile/${username}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,  // Add JWT token to the request headers
-      },
-    })
-    .then(response => {
-      const { user, posts, is_current_user } = response.data;
-      setUserData(user);
+    const fetchData = async () => {
+      try {
+        // Fetch user profile data
+        const userResponse = await axios.get(`/profile/${username}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const { user, posts, is_current_user } = userResponse.data;
+        setUserData(user);
+        setPosts(Array.isArray(posts) ? posts : []); // Ensure posts is an array
+        setIsCurrentUser(is_current_user);
 
-      // Check if posts is an array, if not set it to an empty array
-      if (Array.isArray(posts)) {
-        setPosts(posts);  // If posts is an array, set it as is
-      } else {
-        setPosts([]);  // If it's not an array (including if it's a string like "User has made no posts."), set it as an empty array
+        // Fetch friendship status
+        const friendResponse = await axios.get(`/friends/is_friend/${user.id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setIsFriend(friendResponse.data.is_friend); // Update friendship status
+
+        // Fetch friend request status
+        const requestStatusResponse = await axios.get(`/friends/request_status/${user.id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setRequestStatus(requestStatusResponse.data.status); // Set request status
+
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false); // Set loading to false after all data has been fetched
       }
+    };
 
-      setIsCurrentUser(is_current_user);
-    })
-    .catch(error => {
-      console.error('Error fetching user data:', error);
-    });
+    fetchData();
   }, [username]);
 
   const handleAddFriend = () => {
     // Add friend logic (e.g., send a POST request to add friend)
-    axios.post(`/add_friend/${userData.id}`)
+    axios.post(`/friends/send_request/${userData.id}`, {}, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+      },
+    })
     .then(response => {
       if (response.data) {
         console.log(response.data);
+        setIsFriend(true); // Update friendship status
+        setRequestStatus('pending'); // Update request status
       }
-    }) 
+    })
+    .catch(error => {
+      console.error('Error sending friend request:', error);
+      console.log(error.response.data);
+      if (error.response.data.message === 'Friend request already sent.') {
+        setRequestStatus('pending');
+      }
+    });
   };
+
+  const handleRemoveFriend = () => {
+    // Remove friend logic (e.g., send a POST request to remove friend)
+    axios.post(`/friends/remove_friend/${userData.id}`, {}, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+      },
+    })
+    .then(response => {
+      console.log(response.data);
+      setIsFriend(false); // Update friendship status
+      setRequestStatus(null);
+    })
+    .catch(error => {
+      console.error('Error removing friend:', error);
+    });
+  };
+
+  const renderRequestButton = () => {
+    if (loading) {
+      return <Button variant="secondary" disabled style={{height: "37.6px", width: "122.5px"}}></Button>;
+    }
+    
+    if (requestStatus === 'pending') {
+      return (
+        <Button id="request-sent-btn" variant="secondary" disabled>
+          Request Sent
+        </Button>
+      );
+    } else if (isFriend) {
+      return (
+        <Button id="remove-friend-btn" variant="danger" onClick={handleRemoveFriend}>
+          Remove From Friends
+        </Button>
+      );
+    } else {
+      return (
+        <Button id="add-friend-btn" variant="success" onClick={handleAddFriend}>
+          Send Friend Request
+        </Button>
+      );
+    }
+  };
+
 
   if (!userData) return <div></div>;  // Wait until the user data is loaded
 
   return (
     <>
-    <Header></Header>
+    <Header />
     <div className="profile-page">
       <div className="profile-header">
         <div className="user-info">
@@ -71,9 +149,7 @@ const ProfilePage = () => {
           <p><strong>Phone:</strong> {userData.phone_number}</p>
           <p><strong>Email:</strong> {userData.email}</p>
 
-          {!isCurrentUser && (
-            <Button id="add-friend-btn" variant="primary" onClick={handleAddFriend}>Add Friend</Button>  // Primary button style
-          )}
+          {!isCurrentUser && renderRequestButton()}
         </div>
 
         {/* Edit icon only shown if the logged-in user is viewing their own profile */}
@@ -86,7 +162,7 @@ const ProfilePage = () => {
         )}
       </div>
 
-      <hr />  {/* Added horizontal line between user info and posts */}
+      <hr />
 
       <div className="posts-section">
         <h1 style={{ fontWeight: 'bold', fontSize: '36px' }}>Posts</h1>

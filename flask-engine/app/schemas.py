@@ -3,10 +3,11 @@ from marshmallow import Schema, fields
 class UserSchema(Schema):
     first_name = fields.Str(required=True)
     last_name = fields.Str(required=True)
-    address = fields.Str(required=True)
-    city = fields.Str(required=True)
-    country = fields.Str(required=True)
-    phone_number = fields.Str(required=True)
+
+    address = fields.Str(required=False)
+    city = fields.Str(required=False)
+    country = fields.Str(required=False)
+    phone_number = fields.Str(required=False)
 
     email = fields.Email(required=True)
     username = fields.Str(required=True)

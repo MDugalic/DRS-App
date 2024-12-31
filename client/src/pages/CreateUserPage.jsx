@@ -49,8 +49,9 @@ export const CreateUserPage = () => {
 
   const validateFields = () => {
     const newErrors = {};
+    const requiredFields = ["first_name", "last_name", "email", "username", "password"];
     Object.keys(formData).forEach((key) => {
-      if (!formData[key].trim()) {
+      if (requiredFields.includes(key) && !formData[key].trim()) {
         newErrors[key] = `${key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ')} is required`;
       }
     });

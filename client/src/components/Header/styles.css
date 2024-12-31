@@ -1,0 +1,11 @@
+.notifications-badge {
+  position: absolute;
+  top: 28px; /* Adjust this to align the circle vertically relative to the bell icon */
+  left: 183px; /* Adjust this to align the circle horizontally relative to the bell icon */
+  width: 8px;
+  height: 8px;
+  background-color: #E32636;
+  border-radius: 50%;
+  display: inline-block; /* Ensures it's visible as a small circle */
+  z-index: 1;
+}

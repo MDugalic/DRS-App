@@ -1,0 +1,36 @@
+.request-container {
+    border-top: solid 1px gray;
+    width: fit-content;
+    background-color: #212529;
+    padding: 5px;
+    padding-bottom: 10px;
+}
+
+.username-container {
+    display: flex;                   
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.username-itself {
+    font-size: 20px;
+    flex-grow: 1;
+    text-align: center;
+}
+
+.button {
+    font-size: 16px;
+    display: inline-block;
+    margin-left: 5px;
+    margin-right: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+    border: solid 1px gray;
+    cursor: pointer;
+    background-color: #212529;
+    color: white;
+}
+
+.button:hover {
+    background-color: gray;
+}
