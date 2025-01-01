@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Navbar, Nav } from "react-bootstrap";
 import { FaHome, FaSearch, FaBell, FaUserPlus } from 'react-icons/fa';
 import { CgProfile, CgLogOut } from "react-icons/cg";
+import { HiUsers } from "react-icons/hi2";
 import axios from "axios";
 import './styles.css';
 import { NotificationWindow } from "../NotificationWindow/NotificationWindow";
@@ -94,6 +95,9 @@ export const Header = () => {
             {hasNotifications && (
               <span className="notifications-badge"></span>
             )}
+          </Nav.Link>
+          <Nav.Link href="/friends_list">
+            <HiUsers />
           </Nav.Link>
           <Nav.Link href={`/profile/${username}`}>
             <CgProfile />

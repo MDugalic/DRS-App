@@ -7,6 +7,7 @@ import { UpdateUserPage } from './pages/UpdateUserPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { CreateUserPage } from './pages/CreateUserPage';
 import { NotificationWindow } from './components/NotificationWindow/NotificationWindow';
+import { FriendsListPage } from './pages/FriendsListPage/FriendsListPage';
 import axios from 'axios';
 
 // Dummy function to check if the user is authenticated
@@ -101,6 +102,14 @@ const router = createBrowserRouter([
     path: "/notifications",
     element: (
       <NotificationWindow isVisible={true}/>
+    )
+  },
+  {
+    path: "/friends_list",
+    element: (
+      <ProtectedRoute>
+        <FriendsListPage/>
+      </ProtectedRoute>
     )
   }
 ]);
