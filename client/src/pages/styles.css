@@ -60,6 +60,40 @@ hr {
     gap: 10px;
     /* Space between user-info and icon */
 }
+.post-created-at {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 12px;
+    color: grey;
+}
+
+.post-username {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    /* Align to the left of the post */
+    font-weight: bold;
+    /* Dark gray color for the username */
+    font-size: 18px;
+    /* Adjust size as necessary */
+}
+
+/* Ensure the text inside the post doesn't overlap with other elements */
+.post-text {
+    margin-top: 20px;
+    color:#ccc
+    /* Adjust margin-top to avoid overlap with top elements */
+}
+
+.post {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid #555555;
+    padding: 20px;
+    padding-left: 10px;
+}
 
 .user-info {
     display: inline-block;

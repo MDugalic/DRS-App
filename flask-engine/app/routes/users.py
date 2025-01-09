@@ -1,6 +1,7 @@
 from flask import request, jsonify, redirect, url_for
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
+from sqlalchemy import desc
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from app.models import User as UserModel
 from app.models import Post as PostModel
@@ -163,7 +164,7 @@ class UserProfile(MethodView):
         is_current_user = (str(user.id) == current_user_id)
 
         # Fetch the user's posts
-        posts = PostModel.query.filter_by(user_id=user.id).all()
+        posts = PostModel.query.filter_by(user_id=user.id).order_by(desc(PostModel.created_at)).all()
 
         # Prepare response data
         user_data = {
@@ -180,7 +181,7 @@ class UserProfile(MethodView):
 
         # Prepare posts
         if posts:
-            posts_data = [{"id": post.id, "text": post.text, "image_path": post.image_path} for post in posts]
+            posts_data = [{"id": post.id, "text": post.text, "image_path": post.image_path, "created_at": post.created_at, "username": post.username} for post in posts]
         else:
             posts_data = None
 

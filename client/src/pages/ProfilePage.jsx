@@ -16,7 +16,6 @@ const ProfilePage = () => {
   const [requestStatus, setRequestStatus] = useState(null); // Track the status of the friend request
   const [loading, setLoading] = useState(true); // Track loading state
 
-
   // Load user data and posts
   useEffect(() => {
     const token = localStorage.getItem('access_token');
@@ -131,6 +130,17 @@ const ProfilePage = () => {
     }
   };
 
+  // Format the created_at date (dd/mm/yyyy hh:mm)
+  const formatDate = (createdAt) => {
+    const date = new Date(createdAt);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
+    const year = date.getFullYear();
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    
+    return `${day}/${month}/${year} ${hours}:${minutes}`;
+  };
 
   if (!userData) return <div></div>;  // Wait until the user data is loaded
 
@@ -166,13 +176,15 @@ const ProfilePage = () => {
 
       <div className="posts-section">
         <h1 style={{ fontWeight: 'bold', fontSize: '36px' }}>Posts</h1>
-
+        <br />
         {posts.length === 0 ? (
           <p style={{ color: 'grey' }}>User hasn't made any posts yet.</p>
         ) : (
           posts.map(post => (
             <div key={post.id} className="post">
-              <p>{post.text}</p>
+              <div className="post-created-at">{formatDate(post.created_at)}</div>
+              <p className="post-username">{post.username}</p>
+              <p className="post-text">{post.text}</p>
               {post.image_path && <img src={post.image_path} alt="Post" />}
             </div>
           ))
