@@ -12,13 +12,17 @@ bp = Blueprint("posts", __name__)
 UPLOAD_FOLDER = 'uploads'
 
 @bp.route('/create', methods=['POST'])
+@jwt_required()
 def create_post():
-    user_id = request.form.get('user_id')
+    user_id = get_jwt_identity()
     # should be implemented using session object:
     # user_id = session.get('user_id')
     # if not User.query.get(user_id):
     #     abort(403)  # Unauthorized access
-
+    user = User.query.filter(
+            User.id == user_id
+        ).first()
+    username = user.username
     text = request.form.get('text')
     image = request.files.get('image')
 
@@ -40,7 +44,7 @@ def create_post():
         image.save(image_path)
         print(f"Image saved to: {image_path}")
 
-    post = Post(user_id = user_id, text = text, image_path = image_path)
+    post = Post(user_id = user_id, username= username, text = text, image_path = image_path)
     db.session.add(post)
     db.session.commit()
     return {"message": "Post created successfully."}, 201
@@ -67,6 +71,8 @@ def get_posts_of_user():
             "text": post.text,
             "image_path": post.image_path,
             "approved": post.approved,
+            "created_at": post.created_at,
+            "username": post.username,
         }
         posts_list.append(post_data)
 

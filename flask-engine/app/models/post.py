@@ -1,3 +1,4 @@
+from datetime import datetime
 from app.database import db
 import uuid
 
@@ -10,6 +11,12 @@ class Post(db.Model):
     approved = db.Column(db.Boolean, nullable=False, default=False)
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    username = db.Column(db.String(50), unique=False, nullable=False)
+    created_at = db.Column(
+        db.DateTime, 
+        nullable=False, 
+        default=lambda: datetime.now()
+    )
 
     user = db.relationship('User', back_populates='posts')
 

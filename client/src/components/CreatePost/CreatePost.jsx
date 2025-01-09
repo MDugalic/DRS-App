@@ -46,20 +46,30 @@ export const CreatePost = () => {
         event.preventDefault(); // Prevent the form from reloading the page
 
         const formData = new FormData();
-        formData.append("username", "johndoe123");
         formData.append("text", postContent);
         if (fileInputRef.current.files[0]) {
             formData.append("image", fileInputRef.current.files[0]);
         }
 
         try {
-            const response = await fetch("/posts/create_post", {
+            const response = await fetch("/posts/create", {
                 method: "POST",
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+                },
                 body: formData,
             });
 
             if (!response.ok) {
                 alert("Error creating post");
+                console.log(response);
+            }else{
+                 // Reset textarea content and character count after successful post creation
+                setPostContent(""); // Clear the textarea content
+                setCharCount(0); // Reset character count
+                textareaRef.current.style.height = "auto"; // Reset textarea height
+                fileInputRef.current.value = ''; // Clear file input if an image was selected
+                setSelectedImage(null); // Clear image preview
             }
         } catch (error) {
             console.error("Error submitting form:", error);
@@ -73,6 +83,7 @@ export const CreatePost = () => {
                     <textarea
                         className="bg-dark text-light"
                         ref={textareaRef}
+                        value={postContent}
                         placeholder="What's up?"
                         maxLength={postMaxLength}
                         style={{ overflow: "hidden", resize: "none", border: "0px" }} // Disable manual resizing
