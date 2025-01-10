@@ -185,7 +185,7 @@ const ProfilePage = () => {
               <div className="post-created-at">{formatDate(post.created_at)}</div>
               <p className="post-username">{post.username}</p>
               <p className="post-text">{post.text}</p>
-              {post.image_path && <img src={post.image_path} alt="Post" />}
+              {post.image_path &&<img src={`http://localhost:5000/posts/${post.image_path.replace(/\\/g, '/')}`} alt="Post" />}
             </div>
           ))
         )}

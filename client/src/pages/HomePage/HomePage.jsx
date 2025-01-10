@@ -8,14 +8,19 @@ import { Header } from '../../components/Header/Header'
 
 
 export const HomePage = () => {
+    const token = localStorage.getItem('access_token');
     const [posts, setPosts] = useState([]);
 
     const handleLoadPost = async (event) => {
         try {
 
             const userId = 1; // Replace with the actual user ID you want to query
-            const response = await axios.get(`/posts/get-friends?user_id=${userId}`);
-
+            const response = await axios.get(`/posts/get-friends`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+            console.log(response.data)
             setPosts(response.data)
         } catch (error) {
             console.error("Error fetching friends' posts:", error);
