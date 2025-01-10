@@ -1,8 +1,9 @@
 import os
 from werkzeug.utils import secure_filename
-from flask import request, Blueprint, jsonify
+from flask import request, Blueprint, jsonify, send_from_directory
 from app.models import Post
 from app.models import User
+from app.services.mail_service import EmailService
 from app.database import db
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
@@ -47,7 +48,21 @@ def create_post():
     post = Post(user_id = user_id, username= username, text = text, image_path = image_path)
     db.session.add(post)
     db.session.commit()
+    admins = User.query.filter(User.role == 'admin').all()
+
+                # Send an email to all admins
+    for admin in admins:
+        EmailService.send_email(
+            admin.email,
+            "New Post Made",
+            f"The user {username} has created a new post."
+        )
     return {"message": "Post created successfully."}, 201
+
+@bp.route('/uploads/<filename>')
+def serve_image(filename):
+    uploads_dir = os.path.join(os.getcwd(), 'uploads')  # adjust if needed
+    return send_from_directory(uploads_dir, filename)
 
 @bp.route('/get', methods=['GET'])
 def get_posts_of_user():
@@ -79,8 +94,9 @@ def get_posts_of_user():
     return jsonify(posts_list), 200
 
 @bp.route('/get-friends', methods=['GET'])
+@jwt_required()
 def get_posts_of_friends():
-    user_id = request.args.get('user_id')
+    user_id = get_jwt_identity()
     if not user_id:
         return {"message": "Bad request"}, 400
     user = User.query.get_or_404(user_id)
@@ -91,10 +107,12 @@ def get_posts_of_friends():
     for friend in friends_list:
         # Extract the posts for the current friend
         friend_posts = [{
-            'id': post.id,
-            'text': post.text,
-            'image_path': post.image_path,
-            'approved': post.approved
+            "id": post.id,
+            "text": post.text,
+            "image_path": post.image_path,
+            "approved": post.approved,
+            "created_at": post.created_at,
+            "username": post.username,
         } for post in friend.posts]
         
         posts_by_all_friends.extend(friend_posts)  # Combine all friend's posts into the main list

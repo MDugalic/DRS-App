@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Navbar, Nav } from "react-bootstrap";
-import { FaHome, FaSearch, FaBell, FaUserPlus } from 'react-icons/fa';
+import { FaHome, FaSearch, FaBell, FaUserPlus, FaCheckSquare } from 'react-icons/fa';
 import { CgProfile, CgLogOut } from "react-icons/cg";
 import { HiUsers } from "react-icons/hi2";
 import axios from "axios";
@@ -80,7 +80,7 @@ export const Header = () => {
   }, [showNotifications]);
   
   return (
-    <div style={{ position: "fixed", top: 0, width: "100%" }}>
+    <div style={{ position: "fixed", top: 0, width: "100%", zIndex: 1000 }}>
       <Navbar bg="dark" data-bs-theme="dark" className="p-3">
         <Navbar.Brand href="/">My App</Navbar.Brand>
         <Nav className="ml-auto">
@@ -105,6 +105,11 @@ export const Header = () => {
           {role === "admin" && ( // Show only if the user is an admin
             <Nav.Link href="/register">
               <FaUserPlus />
+            </Nav.Link>
+          )}
+          {role === "admin" && ( // Show only if the user is an admin
+            <Nav.Link href="/post_list">
+              <FaCheckSquare />
             </Nav.Link>
           )}
           <Nav.Link href="/login" onClick={handleLogout}>

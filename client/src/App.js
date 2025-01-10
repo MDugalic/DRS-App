@@ -9,6 +9,7 @@ import { CreateUserPage } from './pages/CreateUserPage';
 import { NotificationWindow } from './components/NotificationWindow/NotificationWindow';
 import { FriendsListPage } from './pages/FriendsListPage/FriendsListPage';
 import axios from 'axios';
+import PostApprovalPage from './pages/PostApprovalPage';
 
 // Dummy function to check if the user is authenticated
 const isAuthenticated = () => {
@@ -95,6 +96,14 @@ const router = createBrowserRouter([
     element: (
       <AdminRoute>
         <CreateUserPage />
+      </AdminRoute>
+    ),
+  },
+  {
+    path: "/post_list",
+    element: (
+      <AdminRoute>
+        <PostApprovalPage />
       </AdminRoute>
     ),
   },

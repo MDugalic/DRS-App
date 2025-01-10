@@ -11,3 +11,4 @@ flask-cors
 flask-jwt-extended
 passlib
 flask-mail
+flask_socketio

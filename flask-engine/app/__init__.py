@@ -10,6 +10,7 @@ from flask_jwt_extended import JWTManager
 from .services import mail
 from datetime import timedelta
 from .models.user import User
+from flask_socketio import SocketIO
 
 import os
 from .database import db
