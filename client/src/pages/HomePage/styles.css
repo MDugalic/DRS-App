@@ -14,5 +14,8 @@
 }
 
 .post-list {
-    height: 100vh;
+    min-height: 100vh;
+    /* Allow the div to grow if content overflows */
+    overflow-y: auto;
+    /* Adds scrolling if the content exceeds the height */
 }

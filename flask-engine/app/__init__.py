@@ -14,7 +14,7 @@ from flask_socketio import SocketIO
 
 import os
 from .database import db
-
+from .socketio_instance import socketio
 #We can provide an optional parameter for the db connection string
 def create_app(db_url=None):
     app = Flask(__name__)
@@ -47,6 +47,7 @@ def create_app(db_url=None):
     api.register_blueprint(users_bp)                 # flask-smorest blueprint is in api
     app.register_blueprint(posts_bp, url_prefix="/posts")  # flask blueprint is in app
     app.register_blueprint(friends_bp, url_prefix="/friends")
+    socketio.init_app(app, cors_allowed_origins="http://localhost:3000")
     return app
 
 def init_swagger(app):
