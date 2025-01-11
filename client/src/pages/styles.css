@@ -117,3 +117,74 @@ hr {
 .edit-icon Link {
     display: block;
 }
+
+.post-approval-page {
+    padding-top: calc(50px + 20px);
+    margin-left: 20vw;
+    margin-right: 20vw;
+    border: 1px solid gray;
+    border-top: none;
+    border-bottom: none;
+    min-height: 100vh;
+    overflow-y: auto;
+}
+
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.approve-button,
+.deny-button {
+    flex: 1;
+    /* Each button takes equal space */
+    background-color: #23272b;
+    /* Dark background */
+    color: #ffffff;
+    /* Light text */
+    border: 1px solid #6c757d;
+    /* Subtle border */
+    padding: 10px;
+    margin: 0 5px;
+    /* Adds space between buttons */
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.approve-button:hover {
+    background-color: #28a745;
+    /* Green hover effect for Approve */
+    transform: scale(1.05);
+    /* Slight zoom on hover */
+}
+
+.deny-button:hover {
+    background-color: #dc3545;
+    /* Red hover effect for Deny */
+    transform: scale(1.05);
+    /* Slight zoom on hover */
+}
+
+/* Styling for the disabled buttons */
+button:disabled {
+    background-color: #ccc;
+    /* Lighter color for disabled state */
+    cursor: not-allowed;
+    /* Make the cursor show that it's not clickable */
+    opacity: 0.6;
+}
+
+button.approve-button:disabled {
+    background-color: #6c757d;
+    /* Darker shade for the approve button when disabled */
+}
+
+button.deny-button:disabled {
+    background-color: #dc3545;
+    /* Darker shade for the deny button when disabled */
+}

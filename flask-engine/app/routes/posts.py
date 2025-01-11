@@ -1,4 +1,5 @@
 import os
+from sqlalchemy import desc
 from werkzeug.utils import secure_filename
 from flask import request, Blueprint, jsonify, send_from_directory
 from app.models import Post
@@ -6,8 +7,9 @@ from app.models import User
 from app.services.mail_service import EmailService
 from app.database import db
 from flask_jwt_extended import jwt_required, get_jwt_identity
-
-
+from flask_socketio import emit
+from app.socketio_instance import socketio
+from datetime import datetime
 bp = Blueprint("posts", __name__)
 
 UPLOAD_FOLDER = 'uploads'
@@ -21,8 +23,8 @@ def create_post():
     # if not User.query.get(user_id):
     #     abort(403)  # Unauthorized access
     user = User.query.filter(
-            User.id == user_id
-        ).first()
+        User.id == user_id
+    ).first()
     username = user.username
     text = request.form.get('text')
     image = request.files.get('image')
@@ -38,25 +40,36 @@ def create_post():
         # Ensure the upload folder exists
         if not os.path.exists(UPLOAD_FOLDER):
             os.makedirs(UPLOAD_FOLDER)  # Create the folder if it doesn't exist
-        
+
         # Save the image with a secure filename
         image_filename = secure_filename(image.filename)
         image_path = os.path.join(UPLOAD_FOLDER, image_filename)
         image.save(image_path)
         print(f"Image saved to: {image_path}")
 
-    post = Post(user_id = user_id, username= username, text = text, image_path = image_path)
+    post = Post(user_id=user_id, username=username, text=text, image_path=image_path)
     db.session.add(post)
     db.session.commit()
-    admins = User.query.filter(User.role == 'admin').all()
 
-                # Send an email to all admins
+    # Notify all admins via email
+    admins = User.query.filter(User.role == 'admin').all()
     for admin in admins:
         EmailService.send_email(
             admin.email,
             "New Post Made",
             f"The user {username} has created a new post."
         )
+
+    # Emit new post to WebSocket clients
+    post_data = {
+        "id": post.id,
+        "text": post.text,
+        "image_path": post.image_path,
+        "username": post.username,
+        "created_at": post.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+    }
+    emit('new_pending_post', post_data, broadcast=True, namespace='/')
+
     return {"message": "Post created successfully."}, 201
 
 @bp.route('/uploads/<filename>')
@@ -183,3 +196,72 @@ def delete_post(id):
     db.session.delete(post)
     db.session.commit()
     return {"message": "Post deleted successfully."}, 200
+
+@socketio.on('get_pending_posts')
+def handle_get_pending_posts():
+    # Query all posts with `approved` status as "Pending"
+    pending_posts = Post.query.filter_by(approved="Pending").order_by(desc(Post.created_at)).all()
+    
+    # Prepare data to emit, formatting datetime objects
+    posts_list = [{
+        "id": post.id,
+        "text": post.text,
+        "image_path": post.image_path,
+        "username": post.username,
+        "created_at": post.created_at.strftime('%Y-%m-%d %H:%M:%S') if isinstance(post.created_at, datetime) else post.created_at,
+    } for post in pending_posts]
+
+    # Emit the list of posts back to the client
+    emit('pending_posts_update', posts_list)
+
+@bp.route('/approve/<string:post_id>', methods=['PUT'])
+@jwt_required()
+def approve_post(post_id):
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+
+    if user.role != 'admin':
+        return {"message": "Unauthorized. Only admins can approve posts."}, 403
+
+    post = Post.query.get(post_id)
+    if not post:
+        return {"message": "Post not found."}, 404
+
+    post.approved = "Approved"
+    db.session.commit()
+    post_user = User.query.get(post.user_id)
+    EmailService.send_email(
+            post_user.email,
+            "Post approved",
+            f"Dear {post_user.username},\n\nYour post has been approved.\n\nPost content:\n{post.text}"
+        )
+    # Notify clients about the updated post
+    emit('post_approved', {"id": post.id}, broadcast=True, namespace='/')
+
+    return {"message": "Post approved successfully."}, 200
+
+@bp.route('/deny/<string:post_id>', methods=['PUT'])
+@jwt_required()
+def deny_post(post_id):
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+
+    if user.role != 'admin':
+        return {"message": "Unauthorized. Only admins can deny posts."}, 403
+
+    post = Post.query.get(post_id)
+    if not post:
+        return {"message": "Post not found."}, 404
+
+    post.approved = "Denied"
+    db.session.commit()
+    post_user = User.query.get(post.user_id)
+    EmailService.send_email(
+            post_user.email,
+            "Post denied",
+            f"Dear {post_user.username},\n\nYour post has been denied.\n\nPost content:\n{post.text}"
+        )
+    # Notify clients about the updated post
+    emit('post_denied', {"id": post.id}, broadcast=True, namespace='/')
+
+    return {"message": "Post denied successfully."}, 200
