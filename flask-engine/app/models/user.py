@@ -19,7 +19,9 @@ class User(UserMixin, db.Model):
 
     # 'user', 'admin'
     role = db.Column(db.String(20), nullable=False, default="user")
-    first_login = db.Column(db.Boolean, default=True)  # Track if this is the user's first login
+    first_login = db.Column(db.Boolean, default=True)
+    denied_posts = db.Column(db.Integer, nullable=False, default=0)
+    is_blocked = db.Column(db.Boolean, nullable=False, default=False)
     posts = db.relationship('Post',
                             back_populates='user',
                             cascade="all, delete-orphan")

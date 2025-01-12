@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Navbar, Nav } from "react-bootstrap";
-import { FaHome, FaSearch, FaBell, FaUserPlus, FaCheckSquare } from 'react-icons/fa';
+import { FaHome, FaSearch, FaBell, FaUserPlus, FaCheckSquare, FaBan } from 'react-icons/fa';
 import { CgProfile, CgLogOut } from "react-icons/cg";
 import { HiUsers } from "react-icons/hi2";
 import axios from "axios";
@@ -110,6 +110,11 @@ export const Header = () => {
           {role === "admin" && ( // Show only if the user is an admin
             <Nav.Link href="/post_list">
               <FaCheckSquare />
+            </Nav.Link>
+          )}
+          {role === "admin" && ( // Show only if the user is an admin
+            <Nav.Link href="/block_list">
+              <FaBan />
             </Nav.Link>
           )}
           <Nav.Link href="/login" onClick={handleLogout}>
