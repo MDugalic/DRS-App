@@ -42,10 +42,16 @@ const PostApprovalPage = () => {
     }, []);
 
     // Helper function to format the created_at date
-    const formatDate = (dateString) => {
-        const date = new Date(dateString);
-        return date.toLocaleString();
-    };
+    const formatDate = (createdAt) => {
+    const date = new Date(createdAt);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
+    const year = date.getFullYear();
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    
+    return `${day}/${month}/${year} ${hours}:${minutes}`;
+  };
 
     const handleApprove = async (postId) => {
         // Update the post to mark it as "processing"
@@ -146,12 +152,7 @@ const PostApprovalPage = () => {
                                 <div className="post-created-at">{formatDate(post.created_at)}</div>
                                 <p className="post-username">{post.username}</p>
                                 <p className="post-text">{post.text}</p>
-                                {post.image_path && (
-                                    <img
-                                        src={`http://localhost:5000/posts/${post.image_path.replace(/\\/g, '/')}`}
-                                        alt="Post"
-                                    />
-                                )}
+                                {post.image_path && (<div className="image-preview"><img src={`http://localhost:5000/posts/${post.image_path.replace(/\\/g, '/')}`} alt="Post" /></div>)}
                                 <div className="button-group">
                                     <button
                                         className="approve-button"
