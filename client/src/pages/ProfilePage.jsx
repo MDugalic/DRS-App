@@ -37,7 +37,6 @@ const ProfilePage = () => {
         setUserData(user);
         setPosts(Array.isArray(posts) ? posts : []); // Ensure posts is an array
         setIsCurrentUser(is_current_user);
-
         // Fetch friendship status
         const friendResponse = await axios.get(`/friends/is_friend/${user.id}`, {
           headers: {

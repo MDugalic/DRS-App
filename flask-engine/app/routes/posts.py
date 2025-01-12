@@ -1,12 +1,12 @@
 import os
-from sqlalchemy import desc
+from sqlalchemy import desc, text
 from werkzeug.utils import secure_filename
 from flask import request, Blueprint, jsonify, send_from_directory
 from app.models import Post
 from app.models import User
 from app.services.mail_service import EmailService
 from app.database import db
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity, unset_jwt_cookies
 from flask_socketio import emit
 from app.socketio_instance import socketio
 from datetime import datetime
@@ -254,14 +254,37 @@ def deny_post(post_id):
     if not post:
         return {"message": "Post not found."}, 404
 
+    # Update post approval status
     post.approved = "Denied"
     db.session.commit()
+
+    # Get the user who created the post
     post_user = User.query.get(post.user_id)
+
     EmailService.send_email(
+        post_user.email,
+        "Post Denied",
+        f"Dear {post_user.username},\n\nYour post has been denied.\n\nPost content:\n{post.text}"
+    )
+
+    # Increment denied_posts atomically
+    db.session.execute(
+        text("UPDATE users SET denied_posts = denied_posts + 1 WHERE id = :user_id"),
+        {"user_id": post_user.id}
+    )
+    db.session.commit()
+    db.session.refresh(post_user)
+
+    # Check if the user needs to be blocked
+    if post_user.denied_posts > 3:
+        post_user.is_blocked = True
+        db.session.commit()
+        EmailService.send_email(
             post_user.email,
-            "Post denied",
-            f"Dear {post_user.username},\n\nYour post has been denied.\n\nPost content:\n{post.text}"
+            "Account Blocked",
+            f"Dear {post_user.username},\n\nYour account has been blocked due to multiple denied posts."
         )
+
     # Notify clients about the updated post
     emit('post_denied', {"id": post.id}, broadcast=True, namespace='/')
 

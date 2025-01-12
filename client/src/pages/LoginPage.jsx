@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 export const LoginPage = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");  //CHANGE HERE: State for error message
     const navigate = useNavigate();
     
     // Redirect if the user is already logged in
@@ -40,36 +41,51 @@ export const LoginPage = () => {
                 navigate("/"); 
             }
         } catch (error) {
+            if (error.response && error.response.data) {
+                //CHANGE HERE: Handle error if user is blocked
+                if (error.response.data.message === "Account is blocked.") {
+                    setErrorMessage("Your account is blocked. Please contact support.");  //CHANGE HERE: Set error message
+                } else {
+                    setErrorMessage("Invalid username or password.");  //CHANGE HERE: Generic error message
+                }
+            } else {
+                setErrorMessage("An error occurred. Please try again later.");  //CHANGE HERE: General error handling
+            }
             console.error("Error sending login data:", error);
         }
     };
 
     return (
         <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh' }}>
-        <Form className="form-page-layout" onSubmit={handleLogin}>
-            <Form.Group className="mb-3">
-                <Form.Label>Username</Form.Label>
-                <Form.Control
-                    type="text"
-                    name="username"
-                    value={username}
-                    onChange={(event) => setUsername(event.target.value)}/>
-            </Form.Group>
+            <Form className="form-page-layout" onSubmit={handleLogin}>
+                <Form.Group className="mb-3">
+                    <Form.Label>Username</Form.Label>
+                    <Form.Control
+                        type="text"
+                        name="username"
+                        value={username}
+                        onChange={(event) => setUsername(event.target.value)}/>
+                </Form.Group>
 
-            <Form.Group className="mb-3">
-                <Form.Label>Password</Form.Label>
-                <Form.Control
-                    type="password"
-                    name="password"
-                    value={password}
-                    onChange={(event) => setPassword(event.target.value)}/>
-            </Form.Group>
+                <Form.Group className="mb-3">
+                    <Form.Label>Password</Form.Label>
+                    <Form.Control
+                        type="password"
+                        name="password"
+                        value={password}
+                        onChange={(event) => setPassword(event.target.value)}/>
+                </Form.Group>
 
-            <Button variant="primary" type="submit">
-                Sign in
-            </Button>
-        </Form>
+                <Button variant="primary" type="submit">
+                    Sign in
+                </Button>
+
+                {errorMessage && (  //CHANGE HERE: Display error message if exists
+                    <div className="alert alert-danger mt-3" role="alert">
+                        {errorMessage}
+                    </div>
+                )}
+            </Form>
         </div>
-
     );
 }

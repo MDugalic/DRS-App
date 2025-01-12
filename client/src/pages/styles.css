@@ -110,8 +110,10 @@ hr {
     /* Align vertically */
     justify-content: center;
     /* Align horizontally if needed */
+    margin-top: 50px;
     padding: 5px;
     /* Optional: Add some padding */
+    z-index: 1;
 }
 
 .edit-icon Link {
@@ -200,4 +202,50 @@ button.deny-button:disabled {
     max-height: 60vh;
     object-fit: contain;
     border-radius: 15px;
+}
+
+.blocklist-page {
+    padding-top: calc(50px + 20px);
+    margin-left: 20vw;
+    margin-right: 20vw;
+    border: 1px solid gray;
+    border-top: none;
+    border-bottom: none;
+    min-height: 100vh;
+    overflow-y: auto;
+}
+
+.blocklist-page {
+    padding-top: calc(50px + 20px);
+    margin-left: 20vw;
+    margin-right: 20vw;
+    border: 1px solid gray;
+    border-top: none;
+    border-bottom: none;
+    min-height: 100vh;
+    overflow-y: auto;
+}
+
+.blocked-user {
+    display: flex;
+    justify-content: flex-start;
+    /* Align items to the start */
+    flex-direction: row;
+    /* Keeps the name and button on the same row */
+    align-items: center;
+    /* Centers the content vertically */
+    border-top: 1px solid #555555;
+    padding: 20px;
+    padding-left: 10px;
+}
+
+.blocked-user div {
+    margin-right: 10px;
+    /* Adds space between username/first name/last name and the button */
+}
+
+.unblock-button {
+    margin-left: 10px;
+    width: 200px;
+    /* Adds space between the name and the button */
 }

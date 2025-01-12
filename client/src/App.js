@@ -5,6 +5,7 @@ import { HomePage } from './pages/HomePage/HomePage';
 import { LoginPage } from './pages/LoginPage';
 import { UpdateUserPage } from './pages/UpdateUserPage';
 import { ProfilePage } from './pages/ProfilePage';
+import { BlockListPage } from './pages/BlockListPage';
 import { CreateUserPage } from './pages/CreateUserPage';
 import { NotificationWindow } from './components/NotificationWindow/NotificationWindow';
 import { FriendsListPage } from './pages/FriendsListPage/FriendsListPage';
@@ -104,6 +105,14 @@ const router = createBrowserRouter([
     element: (
       <AdminRoute>
         <PostApprovalPage />
+      </AdminRoute>
+    ),
+  },
+  {
+    path: "/block_list",
+    element: (
+      <AdminRoute>
+        <BlockListPage />
       </AdminRoute>
     ),
   },
