@@ -42,7 +42,7 @@ export const HomePage = () => {
                     <div className="post-list">
                         {posts.length > 0 ? (
                             posts.map((post) => (
-                                <DisplayPost id={post.id} text={post.text} image_path={post.image_path}/>
+                                <DisplayPost id={post.id} username={post.username} text={post.text} image_path={post.image_path} created_at={post.created_at}/>
                             ))
                         ) : (
                             <p>No posts available</p>

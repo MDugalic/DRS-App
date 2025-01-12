@@ -4,7 +4,7 @@ import { IoMdHeartEmpty, IoMdHeart } from "react-icons/io";
 import './styles.css';
 
 
-export const DisplayPost = ({text, image_path}) => {
+export const DisplayPost = ({username, text, image_path, created_at}) => {
     const [isLiked, setIsLiked] = useState(false);
     const heartIconRef = useRef(null);
 
@@ -12,8 +12,22 @@ export const DisplayPost = ({text, image_path}) => {
         setIsLiked(prevState => !prevState);
     }
 
+    // Helper function to format the created_at date
+    const formatDate = (createdAt) => {
+    const date = new Date(createdAt);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
+    const year = date.getFullYear();
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    
+    return `${day}/${month}/${year} ${hours}:${minutes}`;
+  };
+
     return (
         <div className="post-container">
+            <div className="post-created-at">{formatDate(created_at)}</div>
+                <p className="post-username">{username}</p>
             <div className="post-form">
             <div className="bg-dark text-light post-text" style={{ overflow: "hidden", resize: "none", border: "0px" }}>
                 {text}
@@ -24,7 +38,7 @@ export const DisplayPost = ({text, image_path}) => {
                         {image_path && (
                             <div className="image-preview">
                                 <img 
-                                    src={image_path} 
+                                    src={`http://localhost:5000/posts/${image_path.replace(/\\/g, '/')}`} 
                                     alt="Selected" 
                                 />
                             </div>

@@ -113,7 +113,7 @@ def get_posts_of_friends():
     if not user_id:
         return {"message": "Bad request"}, 400
     user = User.query.get_or_404(user_id)
-    friends_list = user.friends.all()
+    friends_list = user.friends.union(user.friend_of).all()
     posts_by_all_friends = []
     
     # Collect posts from all friends
@@ -126,9 +126,10 @@ def get_posts_of_friends():
             "approved": post.approved,
             "created_at": post.created_at,
             "username": post.username,
-        } for post in friend.posts]
+        } for post in friend.posts if post.approved == "Approved"]
         
         posts_by_all_friends.extend(friend_posts)  # Combine all friend's posts into the main list
+        posts_by_all_friends = sorted(posts_by_all_friends, key=lambda x: x['created_at'], reverse=True)
     return jsonify(posts_by_all_friends)
 
 @bp.route('/edit', methods=['PUT'])
