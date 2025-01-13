@@ -14,7 +14,6 @@ export const LoginPage = () => {
     // Redirect if the user is already logged in
     useEffect(() => {
         const token = localStorage.getItem('access_token');
-        console.log(token)
         if (token) {
             navigate("/");  // Redirect to home if the user is already logged in
         }

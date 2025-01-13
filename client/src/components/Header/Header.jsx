@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Navbar, Nav } from "react-bootstrap";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { FaHome, FaSearch, FaBell, FaUserPlus, FaCheckSquare, FaBan } from 'react-icons/fa';
 import { CgProfile, CgLogOut } from "react-icons/cg";
 import { HiUsers } from "react-icons/hi2";
@@ -84,42 +85,60 @@ export const Header = () => {
       <Navbar bg="dark" data-bs-theme="dark" className="p-3">
         <Navbar.Brand href="/">My App</Navbar.Brand>
         <Nav className="ml-auto">
+
+        <OverlayTrigger placement="bottom" overlay={<Tooltip>Home</Tooltip>}>
           <Nav.Link href="/">
             <FaHome />
           </Nav.Link>
+        </OverlayTrigger>
+
+        <OverlayTrigger placement="bottom" overlay={<Tooltip>Search</Tooltip>}>
           <Nav.Link href="#search">
             <FaSearch />
           </Nav.Link>
+        </OverlayTrigger>
+
+        <OverlayTrigger placement="bottom" overlay={<Tooltip>Notifications</Tooltip>}>
           <Nav.Link onClick={toggleNotifications}>
             <FaBell />
-            {hasNotifications && (
-              <span className="notifications-badge"></span>
-            )}
+            {hasNotifications && <span className="notifications-badge"></span>}
           </Nav.Link>
+        </OverlayTrigger>
+
+        <OverlayTrigger placement="bottom" overlay={<Tooltip>Friends List</Tooltip>}>
           <Nav.Link href="/friends_list">
             <HiUsers />
           </Nav.Link>
-          <Nav.Link href={`/profile/${username}`}>
-            <CgProfile />
-          </Nav.Link>
-          {role === "admin" && ( // Show only if the user is an admin
-            <Nav.Link href="/register">
-              <FaUserPlus />
-            </Nav.Link>
+        </OverlayTrigger>
+
+          {role === "admin" && (
+            <OverlayTrigger placement="bottom" overlay={<Tooltip>Register New User</Tooltip>}>
+              <Nav.Link href="/register">
+                <FaUserPlus />
+              </Nav.Link>
+            </OverlayTrigger>
           )}
-          {role === "admin" && ( // Show only if the user is an admin
-            <Nav.Link href="/post_list">
-              <FaCheckSquare />
-            </Nav.Link>
+
+          {role === "admin" && (
+            <OverlayTrigger placement="bottom" overlay={<Tooltip>Approve Posts</Tooltip>}>
+              <Nav.Link href="/post_list">
+                <FaCheckSquare />
+              </Nav.Link>
+            </OverlayTrigger>
           )}
-          {role === "admin" && ( // Show only if the user is an admin
-            <Nav.Link href="/block_list">
-              <FaBan />
-            </Nav.Link>
+
+          {role === "admin" && (
+            <OverlayTrigger placement="bottom" overlay={<Tooltip>Block List</Tooltip>}>
+              <Nav.Link href="/block_list">
+                <FaBan />
+              </Nav.Link>
+            </OverlayTrigger>
           )}
-          <Nav.Link href="/login" onClick={handleLogout}>
-            <CgLogOut />
-          </Nav.Link>
+          <OverlayTrigger placement="bottom" overlay={<Tooltip>Logout</Tooltip>}>
+            <Nav.Link href="/login" onClick={handleLogout}>
+              <CgLogOut />
+            </Nav.Link>
+          </OverlayTrigger>
         </Nav>
       </Navbar>
 
