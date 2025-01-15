@@ -4,6 +4,7 @@ import './styles.css';
 import { IoMdCheckmark } from "react-icons/io";
 import { IoMdClose } from "react-icons/io";
 import { FaUser } from "react-icons/fa";
+import {urlFriendsAcceptRequest, urlFriendsRejectRequest} from '../../apiEndpoints';
 
 
 export const SingleRequest = ({username, id, onUpdate}) => {
@@ -15,7 +16,7 @@ export const SingleRequest = ({username, id, onUpdate}) => {
 
         try {
             const response = await axios.post(
-                `/friends/accept_request/${id}`,
+                `${urlFriendsAcceptRequest}/${id}`,
                 {},
                 {
                     headers: {
@@ -37,7 +38,7 @@ export const SingleRequest = ({username, id, onUpdate}) => {
         if (!token) return null;
         try {
             const response = await axios.post(
-                `/friends/reject_request/${id}`,
+                `${urlFriendsRejectRequest}${id}`,
                 {}, // This is the request body (empty if not needed)
                 {
                     headers: {

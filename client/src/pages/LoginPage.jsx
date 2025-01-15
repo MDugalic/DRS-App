@@ -4,6 +4,7 @@ import Button from "react-bootstrap/Button";
 import './styles.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom'; 
+import { urlLogin } from "../apiEndpoints";
 
 export const LoginPage = () => {
     const [username, setUsername] = useState("");
@@ -28,9 +29,8 @@ export const LoginPage = () => {
         const loginData = { username, password };
 
         try {
-            const response = await axios.post('/login', loginData);
+            const response = await axios.post(urlLogin, loginData);
 
-            // Assuming backend returns only your project's token
             if (response.data && response.data.access_token) {
                 // Store the new token
                 localStorage.setItem('access_token', response.data.access_token);

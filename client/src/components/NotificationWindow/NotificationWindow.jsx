@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { SingleRequest } from "../SingleRequest/SingleRequest";
 import './styles.css';
+import {urlFriendsGetRequests} from '../../apiEndpoints';
+
+
 export const NotificationWindow = ({ isVisible }) => {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -11,7 +14,7 @@ export const NotificationWindow = ({ isVisible }) => {
     if (isVisible) {
       const token = localStorage.getItem('access_token');
       axios
-        .get("/friends/get_requests", {
+        .get(urlFriendsGetRequests, {
           headers: {
             Authorization: `Bearer ${token}`
           }

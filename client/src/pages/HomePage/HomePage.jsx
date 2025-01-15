@@ -4,7 +4,7 @@ import { CreatePost } from "../../components/CreatePost/CreatePost";
 import './styles.css';
 import { DisplayPost } from "../../components/DisplayPost/DisplayPost";
 import { Header } from '../../components/Header/Header'
-
+import {urlPostsGetFriends} from '../../apiEndpoints';
 
 
 export const HomePage = () => {
@@ -15,7 +15,7 @@ export const HomePage = () => {
         try {
 
             const userId = 1; // Replace with the actual user ID you want to query
-            const response = await axios.get(`/posts/get-friends`, {
+            const response = await axios.get(urlPostsGetFriends, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },

@@ -4,7 +4,8 @@ import { useParams, Link } from 'react-router-dom'; // To capture the username f
 import './styles.css';  // Import the CSS file for styling
 import Button from 'react-bootstrap/Button'; // Importing Button from react-bootstrap
 import { FaPencilAlt } from 'react-icons/fa'; // Importing FontAwesome Pencil icon
-import { Header } from '../components/Header/Header'
+import { Header } from '../components/Header/Header';
+import {urlProfile, urlFriendsIsFriend, urlFriendsRequestStatus, urlFriendsSendRequest, urlFriendsRemoveFriend} from '../apiEndpoints';
 
 const ProfilePage = () => {
   const { username } = useParams();  // Capture the username from the URL
@@ -28,7 +29,7 @@ const ProfilePage = () => {
     const fetchData = async () => {
       try {
         // Fetch user profile data
-        const userResponse = await axios.get(`/profile/${username}`, {
+        const userResponse = await axios.get(`${urlProfile}/${username}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -38,7 +39,7 @@ const ProfilePage = () => {
         setPosts(Array.isArray(posts) ? posts : []); // Ensure posts is an array
         setIsCurrentUser(is_current_user);
         // Fetch friendship status
-        const friendResponse = await axios.get(`/friends/is_friend/${user.id}`, {
+        const friendResponse = await axios.get(`${urlFriendsIsFriend}${user.id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -46,7 +47,7 @@ const ProfilePage = () => {
         setIsFriend(friendResponse.data.is_friend); // Update friendship status
 
         // Fetch friend request status
-        const requestStatusResponse = await axios.get(`/friends/request_status/${user.id}`, {
+        const requestStatusResponse = await axios.get(`${urlFriendsRequestStatus}/${user.id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -65,7 +66,7 @@ const ProfilePage = () => {
 
   const handleAddFriend = () => {
     // Add friend logic (e.g., send a POST request to add friend)
-    axios.post(`/friends/send_request/${userData.id}`, {}, {
+    axios.post(`${urlFriendsSendRequest}/${userData.id}`, {}, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('access_token')}`,
       },
@@ -88,7 +89,7 @@ const ProfilePage = () => {
 
   const handleRemoveFriend = () => {
     // Remove friend logic (e.g., send a POST request to remove friend)
-    axios.post(`/friends/remove_friend/${userData.id}`, {}, {
+    axios.post(`${urlFriendsRemoveFriend}/${userData.id}`, {}, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('access_token')}`,
       },

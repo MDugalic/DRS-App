@@ -8,6 +8,7 @@ import axios from 'axios';
 import { Header } from '../components/Header/Header'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import {urlRegister} from '../apiEndpoints';
 
 export const CreateUserPage = () => {
   const initialFormData = {
@@ -71,7 +72,7 @@ export const CreateUserPage = () => {
 
     // send to API
     try {
-      const response = await axios.post('/register', formData, {
+      const response = await axios.post(`${urlRegister}`, formData, {
         headers: {
           'Content-Type': 'application/json'
         }

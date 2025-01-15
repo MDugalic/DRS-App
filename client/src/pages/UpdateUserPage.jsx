@@ -7,6 +7,8 @@ import './styles.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Header } from '../components/Header/Header'
+import {urlGetCurrentUser, urlUpdateProfile} from '../apiEndpoints';
+
 
 export const UpdateUserPage = () => {
   const [formData, setFormData] = useState({
@@ -40,7 +42,7 @@ export const UpdateUserPage = () => {
 
     const fetchUserData = async () => {
         try {
-            const response = await axios.get('/get_current_user', {
+            const response = await axios.get(urlGetCurrentUser, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('access_token')}`
                 }
@@ -107,7 +109,7 @@ export const UpdateUserPage = () => {
     console.log(formData);
 
     try {
-      const response = await axios.put('/update_profile', formData, {
+      const response = await axios.put(urlUpdateProfile, formData, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('access_token')}`

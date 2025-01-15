@@ -4,7 +4,7 @@ import { Header } from '../../components/Header/Header';
 import axios from 'axios';
 import { FaUser } from "react-icons/fa";
 import { FaArrowRight } from "react-icons/fa";
-
+import {urlFriendsGetAll} from '../../apiEndpoints';
 
 export const FriendsListPage = () => {
     // Define state to hold the friends data
@@ -12,7 +12,7 @@ export const FriendsListPage = () => {
 
     const handleLoadFriends = async () => {
         try {
-            const response = await axios.get('/friends/get_all', {
+            const response = await axios.get(urlFriendsGetAll, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('access_token')}`
                 }

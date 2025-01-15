@@ -3,11 +3,13 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Navbar, Nav } from "react-bootstrap";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { FaHome, FaSearch, FaBell, FaUserPlus, FaCheckSquare, FaBan } from 'react-icons/fa';
-import { CgProfile, CgLogOut } from "react-icons/cg";
+import { CgLogOut } from "react-icons/cg";
 import { HiUsers } from "react-icons/hi2";
 import axios from "axios";
 import './styles.css';
 import { NotificationWindow } from "../NotificationWindow/NotificationWindow";
+import {urlGetCurrentUser, urlFriendsGetRequestCount} from '../../apiEndpoints';
+
 
 export const Header = () => {
   const [role, setRole] = useState(null);
@@ -20,7 +22,7 @@ export const Header = () => {
   useEffect(() => {
     const token = localStorage.getItem("access_token");
     axios
-      .get("/get_current_user", {
+      .get(urlGetCurrentUser, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -40,7 +42,7 @@ export const Header = () => {
   useEffect(() => {
     const token = localStorage.getItem('access_token');
     axios
-      .get("/friends/get_request_count", {
+      .get(urlFriendsGetRequestCount, {
         headers: {
           Authorization: `Bearer ${token}`
         }

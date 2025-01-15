@@ -3,6 +3,7 @@ import axios from 'axios';
 import Button from 'react-bootstrap/Button';
 import { Header } from '../components/Header/Header'
 import './styles.css';
+import { urlGetBlockList, urlUnblockUser } from '../apiEndpoints';
 
 const BlockListPage = () => {
   const [blockedUsers, setBlockedUsers] = useState([]);
@@ -17,7 +18,7 @@ const BlockListPage = () => {
           console.error('No token found');
           return;
         }
-        const response = await axios.get('/get_block_list', {
+        const response = await axios.get(urlGetBlockList, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -41,7 +42,7 @@ const BlockListPage = () => {
         console.error('No token found');
         return;
       }
-      await axios.post(`/unblock_user/${userId}`, {}, {
+      await axios.post(`${urlUnblockUser}/${userId}`, {}, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

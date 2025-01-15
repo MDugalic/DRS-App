@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react"; // Ensure useState and useEffec
 import { Button } from "react-bootstrap";
 import { IoMdHeartEmpty, IoMdHeart } from "react-icons/io";
 import './styles.css';
+import {API_URL} from '../../apiEndpoints';
 
 
 export const DisplayPost = ({username, text, image_path, created_at}) => {
@@ -38,7 +39,7 @@ export const DisplayPost = ({username, text, image_path, created_at}) => {
                         {image_path && (
                             <div className="image-preview">
                                 <img 
-                                    src={`http://localhost:5000/posts/${image_path.replace(/\\/g, '/')}`} 
+                                    src={`${API_URL}/posts/${image_path.replace(/\\/g, '/')}`} 
                                     alt="Selected" 
                                 />
                             </div>

@@ -6,6 +6,8 @@ import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 import addImageIcon from '../../assets/add_image_icon_white.png';
 import trashIcon from '../../assets/trash_icon_white.png';
 import "./styles.css";
+import {urlPostsCreate} from '../../apiEndpoints';
+
 
 export const CreatePost = () => {
     const fileInputRef = useRef(null);

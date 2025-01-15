@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { Header } from '../components/Header/Header';
 import './styles.css';
 import io from 'socket.io-client';
+import { API_URL, urlPostsApprove, urlPostsDeny } from '../apiEndpoints';
 
 const PostApprovalPage = () => {
     const [pendingPosts, setPendingPosts] = useState([]);
 
     useEffect(() => {
-        const socket = io("http://localhost:5000");
+        const socket = io(`${API_URL}`);
 
         // Request the pending posts from the server
         socket.emit("get_pending_posts");
@@ -62,7 +63,7 @@ const PostApprovalPage = () => {
         );
 
         try {
-            const response = await fetch(`http://localhost:5000/posts/approve/${postId}`, {
+            const response = await fetch(`${urlPostsApprove}/${postId}`, {
                 method: "PUT",
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("access_token")}`,
@@ -105,7 +106,7 @@ const PostApprovalPage = () => {
         );
 
         try {
-            const response = await fetch(`http://localhost:5000/posts/deny/${postId}`, {
+            const response = await fetch(`${urlPostsDeny}/${postId}`, {
                 method: "PUT",
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("access_token")}`,
