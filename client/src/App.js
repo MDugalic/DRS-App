@@ -9,6 +9,7 @@ import { BlockListPage } from './pages/BlockListPage';
 import { CreateUserPage } from './pages/CreateUserPage';
 import { NotificationWindow } from './components/NotificationWindow/NotificationWindow';
 import { FriendsListPage } from './pages/FriendsListPage/FriendsListPage';
+import { SearchPage } from './pages/SearchPage/SearchPage';
 import axios from 'axios';
 import PostApprovalPage from './pages/PostApprovalPage';
 
@@ -129,6 +130,13 @@ const router = createBrowserRouter([
         <FriendsListPage/>
       </ProtectedRoute>
     )
+  },
+  {  path: "/search",
+    element: (
+      <ProtectedRoute>
+        <SearchPage />
+      </ProtectedRoute>
+    ),
   }
 ]);
 

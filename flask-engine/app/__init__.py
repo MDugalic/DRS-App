@@ -24,7 +24,7 @@ def create_app(db_url=None):
     configure_mail(app)         # Configure mail
     api = Api(app)              # Connect flask-smorest with the app
     migrate = Migrate(app, db)  # Alembic migrations
-    CORS(app, origins="http://localhost:3000")
+    CORS(app, origins="http://localhost:3003")
 
     # Set a separate secret key for session management
     app.secret_key = "secret_key_here"
@@ -63,7 +63,7 @@ def configure_db(app, db_url=None):
     #if we pass in db_url it will load that string, 
     #if we don't pass db_url, it will check env for database_url
     #if it is not found it will take the 2nd string
-    app.config['SQLALCHEMY_DATABASE_URI'] = db_url or os.getenv("DATABASE_URL", 'mysql://root:qwer@localhost/drs_db')
+    app.config['SQLALCHEMY_DATABASE_URI'] = db_url or os.getenv("DATABASE_URL", 'mysql://root:root@localhost/drs_db')
     #smth smth good
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     #initialises sqlalchemy extension. We give it our flask app so it can connect it to sqlalchemy

@@ -11,7 +11,7 @@ from flask_jwt_extended import create_access_token, create_refresh_token, get_jw
 from app.blocklist import BLOCKLIST
 from flask_login import login_user, logout_user, login_required, current_user
 from app.services.mail_service import EmailService
-
+from sqlalchemy import or_
 from ..schemas import UserSchema
 
 users_bp = Blueprint("users", __name__)
@@ -219,3 +219,45 @@ def unblock_user(user_id):
         db.session.commit()
         return jsonify({'message': 'User has been unblocked'}), 200
     return jsonify({'message': 'User not found'}), 404
+
+@users_bp.route("/search_users", methods=["GET"])
+@jwt_required()
+def search_users():
+    query = request.args.get("query", "").strip()
+
+    if not query:
+        return jsonify({"error": "Search query is required."}), 400
+
+    # Definiši polja koja stvarno postoje u User modelu
+    searchable_fields = ["username", "email", "address", "phone_number","address","first_name","last_name","city"]  # Izbaci 'full_name' i sl.
+
+    try:
+        filters = [
+            getattr(UserModel, field).ilike(f"%{query}%")
+            for field in searchable_fields if hasattr(UserModel, field)
+        ]
+
+        if not filters:
+            return jsonify([]), 200  # Ako nema validnih polja, vraćamo prazan rezultat
+
+        users = UserModel.query.filter(db.or_(*filters)).all()
+
+        if not users:
+            return jsonify([]), 200  # Ako nema rezultata, vraćamo prazan niz
+
+        # Vraćamo samo potrebne podatke
+        user_data = [
+            {
+                "username": user.username,
+                "email": user.email,
+                "address": user.address,  # Ukloni ili dodaj prema modelu
+                "phone_number": user.phone_number
+            }
+            for user in users
+        ]
+
+        return jsonify(user_data), 200
+
+    except Exception as e:
+        print(f"Error during search: {str(e)}")
+        return jsonify({"error": "Internal server error"}), 500
