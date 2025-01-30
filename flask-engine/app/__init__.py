@@ -24,7 +24,7 @@ def create_app(db_url=None):
     configure_mail(app)         # Configure mail
     api = Api(app)              # Connect flask-smorest with the app
     migrate = Migrate(app, db)  # Alembic migrations
-    CORS(app, origins="http://localhost:3003")
+    CORS(app, origins="http://localhost:3000")
 
     # Set a separate secret key for session management
     app.secret_key = "secret_key_here"

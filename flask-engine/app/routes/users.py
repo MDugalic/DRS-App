@@ -248,9 +248,11 @@ def search_users():
         # Vraćamo samo potrebne podatke
         user_data = [
             {
+                "id": user.id,  # Dodaj ID korisnika
                 "username": user.username,
                 "email": user.email,
-                "address": user.address,  # Ukloni ili dodaj prema modelu
+                "first_name": user.first_name,  # Dodaj ime
+                "last_name": user.last_name,  # Dodaj prezime
                 "phone_number": user.phone_number
             }
             for user in users

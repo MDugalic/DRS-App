@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 import './styles.css';
 
 export const SearchPage = () => {
-    const [searchQuery, setSearchQuery] = useState(""); // Drži unos pretrage
-    const [results, setResults] = useState([]); // Čuva rezultate pretrage
-    const [loading, setLoading] = useState(false); // Indikator učitavanja
-    const [error, setError] = useState(""); // Čuva greške
+    const [searchQuery, setSearchQuery] = useState("");
+    const [results, setResults] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
 
-    // Funkcija za pretragu korisnika
     const handleSearch = async () => {
         setLoading(true);
         setError("");
@@ -17,13 +17,13 @@ export const SearchPage = () => {
         try {
             const token = localStorage.getItem("access_token");
             const response = await axios.get(`/search_users`, {
-                params: { query: searchQuery }, // Prosleđivanje parametra pretrage
+                params: { query: searchQuery },
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
 
-            setResults(response.data); // Postavljanje rezultata
+            setResults(response.data);
         } catch (err) {
             console.error("Error during search:", err);
             setError("Failed to fetch search results. Please try again.");
@@ -54,8 +54,11 @@ export const SearchPage = () => {
                 {results.length > 0 ? (
                     results.map((user) => (
                         <div key={user.id} className="result-item">
-                            <p><strong>Username:</strong> {user.username}</p>
-                            <p><strong>Email:</strong> {user.email}</p>
+                            <p>
+                                <Link to={`/profile/${user.username}`}>
+                                    {user.first_name} {user.last_name}
+                                </Link>
+                            </p>
                         </div>
                     ))
                 ) : (
