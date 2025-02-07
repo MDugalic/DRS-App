@@ -60,13 +60,8 @@ def init_swagger(app):
     app.config["OPENAPI_SWAGGER_UI_URL"] = "https://cdn.jsdelivr.net/npm/swagger-ui-dist/"
 
 def configure_db(app, db_url=None):
-    #if we pass in db_url it will load that string, 
-    #if we don't pass db_url, it will check env for database_url
-    #if it is not found it will take the 2nd string
-    app.config['SQLALCHEMY_DATABASE_URI'] = db_url or os.getenv("DATABASE_URL", 'mysql://root:root@localhost/drs_db')
-    #smth smth good
+    app.config['SQLALCHEMY_DATABASE_URI'] = db_url or os.getenv("DATABASE_URL", "mysql://root:root@db:3306/drs_db")
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    #initialises sqlalchemy extension. We give it our flask app so it can connect it to sqlalchemy
     db.init_app(app)
 
 def configure_mail(app):

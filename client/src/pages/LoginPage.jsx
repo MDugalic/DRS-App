@@ -50,7 +50,7 @@ export const LoginPage = () => {
             } else {
                 setErrorMessage("An error occurred. Please try again later.");  //CHANGE HERE: General error handling
             }
-            console.error("Error sending login data:", error);
+            console.error("Error sending login data:", error.response.data);
         }
     };
 
