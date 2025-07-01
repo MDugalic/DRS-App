@@ -23,7 +23,6 @@ export const LoginPage = () => {
     const handleLogin = async (event) => {
         event.preventDefault();
         
-        // Clear any old tokens (like from Google)
         localStorage.removeItem('access_token');  // or sessionStorage.removeItem('access_token');
 
         const loginData = { username, password };
@@ -32,11 +31,7 @@ export const LoginPage = () => {
             const response = await axios.post(urlLogin, loginData);
 
             if (response.data && response.data.access_token) {
-                // Store the new token
                 localStorage.setItem('access_token', response.data.access_token);
-
-                // Proceed with login success actions
-                console.log("Login successful, token:", response.data.access_token);
                 navigate("/"); 
             }
         } catch (error) {

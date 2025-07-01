@@ -52,3 +52,15 @@
   color: #87929c;
   margin-left: 8px;
 }
+
+.search-match {
+    font-size: 1.5rem;
+}
+
+.match-fields {
+    margin: 4px 0 0 30px;
+    padding: 0;
+    list-style-type: disc;
+    color: rgb(255, 179, 38); 
+    font-size: 0.9em;
+}

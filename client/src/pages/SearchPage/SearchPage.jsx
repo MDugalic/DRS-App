@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import './styles.css';
@@ -10,6 +10,13 @@ export const SearchPage = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [hasSearched, setHasSearched] = useState(false);
+
+    useEffect(() => {
+        if (searchQuery.trim() === "") {
+            setResults([]);
+            setHasSearched(false);
+        }
+    }, [searchQuery]);
 
     const handleSearch = async () => {
         if (!searchQuery) return; // Don't search if empty
@@ -36,7 +43,6 @@ export const SearchPage = () => {
         }
     };
 
-    // Handle Enter key press
     const handleKeyDown = (e) => {
         if (e.key === 'Enter') {
             handleSearch();
@@ -84,11 +90,19 @@ export const SearchPage = () => {
                     {results.length > 0 ? (
                         results.map((user) => (
                             <div key={user.id} className="result-item">
-                                <p>
+                                <p className="search-match">
                                     <Link to={`/profile/${user.username}`}>
                                         {user.first_name} {user.last_name}
                                     </Link>
                                 </p>
+
+                                {user.match_fields && user.match_fields.length > 0 && (
+                                    <ul className="match-fields">
+                                        {user.match_fields.map((field, i) => (
+                                            <li key={i}>{field}</li>
+                                        ))}
+                                    </ul>
+                                )}
                             </div>
                         ))
                     ) : (

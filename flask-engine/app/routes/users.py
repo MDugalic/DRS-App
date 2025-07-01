@@ -229,42 +229,40 @@ def unblock_user(user_id):
 @users_bp.route("/search_users", methods=["GET"])
 @jwt_required()
 def search_users():
-    query = request.args.get("query", "").strip()
+    query = request.args.get("query", "").strip().lower()
 
     if not query:
         return jsonify({"error": "Search query is required."}), 400
 
-    # Definiši polja koja stvarno postoje u User modelu
-    searchable_fields = ["username", "email", "address", "phone_number","address","first_name","last_name","city"]  # Izbaci 'full_name' i sl.
+    searchable_fields = [
+        "username", "email", "address", "phone_number",
+        "first_name", "last_name", "city", "country"
+    ]
 
     try:
-        filters = [
-            getattr(UserModel, field).ilike(f"%{query}%")
-            for field in searchable_fields if hasattr(UserModel, field)
-        ]
+        users = UserModel.query.all()
+        results = []
 
-        if not filters:
-            return jsonify([]), 200  # Ako nema validnih polja, vraćamo prazan rezultat
+        for user in users:
+            match_fields = []
 
-        users = UserModel.query.filter(db.or_(*filters)).all()
+            for field in searchable_fields:
+                value = getattr(user, field, "")
+                if value and query in value.lower():
+                    match_fields.append(f"{field.replace('_', ' ').title()}: {value}")
 
-        if not users:
-            return jsonify([]), 200  # Ako nema rezultata, vraćamo prazan niz
+            if match_fields:
+                results.append({
+                    "id": user.id,
+                    "username": user.username,
+                    "email": user.email,
+                    "first_name": user.first_name,
+                    "last_name": user.last_name,
+                    "phone_number": user.phone_number,
+                    "match_fields": match_fields
+                })
 
-        # Vraćamo samo potrebne podatke
-        user_data = [
-            {
-                "id": user.id,  # Dodaj ID korisnika
-                "username": user.username,
-                "email": user.email,
-                "first_name": user.first_name,  # Dodaj ime
-                "last_name": user.last_name,  # Dodaj prezime
-                "phone_number": user.phone_number
-            }
-            for user in users
-        ]
-
-        return jsonify(user_data), 200
+        return jsonify(results), 200
 
     except Exception as e:
         print(f"Error during search: {str(e)}")

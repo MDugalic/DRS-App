@@ -115,11 +115,15 @@ def get_posts_of_friends():
         return {"message": "Bad request"}, 400
     
     try:
+        print(f"Current user ID: {user_id}")  # Debug logging
+        
         # Get accepted friendships
         accepted_friendships = db.session.query(friendship).filter(
             ((friendship.c.user_id == user_id) | (friendship.c.friend_id == user_id)),
             friendship.c.is_accepted == True
         ).all()
+        
+        print(f"Found {len(accepted_friendships)} friendships")  # Debug logging
         
         # Extract friend IDs
         friend_ids = set()
@@ -129,27 +133,41 @@ def get_posts_of_friends():
             else:
                 friend_ids.add(fs.user_id)
         
-        # Get posts from friends
-        posts_by_friends = []
-        for friend_id in friend_ids:
-            friend = User.query.get(friend_id)
-            if friend:
-                friend_posts = [{
-                    "id": post.id,
-                    "text": post.text,
-                    "image_path": post.image_path,
-                    "approved": post.approved,
-                    "created_at": post.created_at.isoformat(),
-                    "username": post.username,
-                } for post in friend.posts if post.approved == "Approved"]
-                posts_by_friends.extend(friend_posts)
+        print(f"Friend IDs before filtering: {friend_ids}")  # Debug logging
+        friend_ids.discard(user_id)
+        print(f"Friend IDs after filtering: {friend_ids}")  # Debug logging
+
+        # Debug: Check if user_id accidentally appears in friend_ids
+        if user_id in friend_ids:
+            print("ERROR: User ID still in friend_ids after filtering!")
+
+        # Get approved posts from friends
+        posts = Post.query.filter(
+            Post.user_id.in_(friend_ids),
+            Post.approved == "Approved"
+        ).order_by(Post.created_at.desc()).all()
         
-        # Sort by creation date (newest first)
-        posts_by_friends.sort(key=lambda x: x['created_at'], reverse=True)
+        print(f"Found {len(posts)} posts from friends")  # Debug logging
         
-        return jsonify(posts_by_friends)
+        # Debug: Check if any posts belong to current user
+        user_posts_count = sum(1 for post in posts if post.user_id == user_id)
+        if user_posts_count > 0:
+            print(f"WARNING: Found {user_posts_count} posts from current user in results!")
+
+        posts_list = [{
+            "id": post.id,
+            "text": post.text,
+            "image_path": post.image_path,
+            "approved": post.approved,
+            "created_at": post.created_at.isoformat(),
+            "username": post.username,
+            "user_id": post.user_id  # Include user_id for debugging
+        } for post in posts]
+        
+        return jsonify(posts_list)
     
     except Exception as e:
+        print(f"Error: {str(e)}")
         return {"message": "Internal server error"}, 500
 
 @bp.route('/edit', methods=['PUT'])

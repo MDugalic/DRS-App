@@ -1,3 +1,4 @@
+import os
 from flask import Flask
 from flask_login import LoginManager
 from flask_smorest import Api
@@ -11,11 +12,9 @@ from .services import mail
 from datetime import timedelta
 from .models.user import User
 from flask_socketio import SocketIO
-
-import os
 from .database import db
 from .socketio_instance import socketio
-#We can provide an optional parameter for the db connection string
+
 def create_app(db_url=None):
     app = Flask(__name__)
 

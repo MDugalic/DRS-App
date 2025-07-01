@@ -10,62 +10,50 @@ import './styles.css';
 import { NotificationWindow } from "../NotificationWindow/NotificationWindow";
 import {urlGetCurrentUser, urlFriendsGetRequestCount} from '../../apiEndpoints';
 
-
-export const Header = () => {
+export const Header = ({ onFriendRequestUpdate }) => {  // Add prop for callback
   const [role, setRole] = useState(null);
   const [username, setUsername] = useState("");
-  const [showNotifications, setShowNotifications] = useState(false); // State to toggle notification window
-  const [hasNotifications, setHasNotifications] = useState(false); // State to indicate notifications
-
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [hasNotifications, setHasNotifications] = useState(false);
   const notificationRef = useRef(null);
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
-    axios
-      .get(urlGetCurrentUser, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((response) => {
-        const { role, username } = response.data;
-        setRole(role); // Store role (e.g., "admin" or "user")
-        setUsername(username); // Store username for profile link
-      })
-      .catch((error) => {
-        console.error("Error fetching user data:", error);
-      });
+    axios.get(urlGetCurrentUser, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    .then((response) => {
+      const { role, username } = response.data;
+      setRole(role);
+      setUsername(username);
+    })
+    .catch(console.error);
   }, []);
 
-  // Red badge for Notification icon
-  // TODO(mby?): Add notifitaion count inside the badge 
-  useEffect(() => {
+  const refreshFriendCount = () => {
     const token = localStorage.getItem('access_token');
-    axios
-      .get(urlFriendsGetRequestCount, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      })
-      .then((response) => {
-        setHasNotifications(response.data.count > 0);
-      })
-      .catch((error) => {
-        console.error("Error fetching notification count:", error);
-      });
+    axios.get(urlFriendsGetRequestCount, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    .then((response) => {
+      setHasNotifications(response.data.count > 0);
+    })
+    .catch(console.error);
+  };
+
+  useEffect(() => {
+    refreshFriendCount();
   }, []);
 
-  
   const handleLogout = () => {
-    localStorage.removeItem("access_token"); // Clear token
+    localStorage.removeItem("access_token");
   };
 
   const toggleNotifications = (event) => {
     event.stopPropagation();
-    setShowNotifications((prev) => !prev); // Toggle the visibility state
+    setShowNotifications(prev => !prev);
   };
 
-  // Close the notification window when clicking outside, on empty space
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (notificationRef.current && !notificationRef.current.contains(event.target)) {
@@ -81,6 +69,14 @@ export const Header = () => {
       document.removeEventListener("click", handleClickOutside);
     };
   }, [showNotifications]);
+
+  const handleFriendRequestUpdate = () => {
+    refreshFriendCount();
+    if (onFriendRequestUpdate) {
+      onFriendRequestUpdate(); // Call the parent callback
+    }
+  };
+
   
   return (
     <div style={{ position: "fixed", top: 0, width: "100%", zIndex: 1000 }}>
@@ -158,11 +154,13 @@ export const Header = () => {
 
       {/* Render the NotificationWindow */}
       {showNotifications && (
-      <div ref={notificationRef}>
-        <NotificationWindow isVisible={showNotifications} />
-      </div>
-)}
-
+        <div ref={notificationRef}>
+          <NotificationWindow 
+            isVisible={showNotifications} 
+            onFriendRequestUpdate={handleFriendRequestUpdate}
+          />
+        </div>
+      )}
     </div>
   );
 };
