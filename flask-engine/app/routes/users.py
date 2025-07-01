@@ -184,11 +184,17 @@ class UserProfile(MethodView):
             "username": user.username,
         }
 
-        # Prepare posts
-        if posts:
-            posts_data = [{"id": post.id, "text": post.text, "image_path": post.image_path, "created_at": post.created_at, "username": post.username} for post in posts]
-        else:
-            posts_data = None
+        posts_data = []
+        for post in posts:
+            post_data = {
+                "id": post.id,
+                "text": post.text,
+                "image_path": post.image_path,
+                "created_at": post.created_at,
+                "username": post.username,
+                "approved": post.approved,
+            }
+            posts_data.append(post_data)
 
         # Return the profile data and posts
         return jsonify({

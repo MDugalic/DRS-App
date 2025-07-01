@@ -85,7 +85,7 @@ export const Header = () => {
   return (
     <div style={{ position: "fixed", top: 0, width: "100%", zIndex: 1000 }}>
       <Navbar bg="dark" data-bs-theme="dark" className="p-3">
-        <Navbar.Brand href="/">My App</Navbar.Brand>
+        <Navbar.Brand href="/">Drs App</Navbar.Brand>
         <Nav className="ml-auto">
 
         <OverlayTrigger placement="bottom" overlay={<Tooltip>Home</Tooltip>}>
@@ -95,7 +95,7 @@ export const Header = () => {
         </OverlayTrigger>
 
         <OverlayTrigger placement="bottom" overlay={<Tooltip>Search</Tooltip>}>
-          <Nav.Link href="#search">
+          <Nav.Link href="/search">
             <FaSearch />
           </Nav.Link>
         </OverlayTrigger>
@@ -136,9 +136,21 @@ export const Header = () => {
               </Nav.Link>
             </OverlayTrigger>
           )}
-          <OverlayTrigger placement="bottom" overlay={<Tooltip>Logout</Tooltip>}>
+        </Nav>
+        
+        <Nav className="ms-auto">
+          <OverlayTrigger placement="bottom" overlay={<Tooltip>Log out</Tooltip>}>
             <Nav.Link href="/login" onClick={handleLogout}>
               <CgLogOut />
+            </Nav.Link>
+          </OverlayTrigger>
+
+          <OverlayTrigger
+            placement="bottom"
+            overlay={<Tooltip>View your profile</Tooltip>}
+          >
+            <Nav.Link className="text-light" href={`/profile/${username}`}>
+              {username}
             </Nav.Link>
           </OverlayTrigger>
         </Nav>

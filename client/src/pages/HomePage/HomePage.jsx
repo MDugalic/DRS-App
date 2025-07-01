@@ -11,22 +11,22 @@ export const HomePage = () => {
     const token = localStorage.getItem('access_token');
     const [posts, setPosts] = useState([]);
 
-    const handleLoadPost = async () => {
-        try {
-            const response = await axios.get(urlPostsGetFriends, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-            setPosts(response.data);
-        } catch (error) {
-            console.error("Error fetching friends' posts:", error);
-        }
-    }
-
     useEffect(() => {
+        const handleLoadPost = async () => {
+            try {
+                const response = await axios.get(urlPostsGetFriends, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                setPosts(response.data);
+            } catch (error) {
+                console.error("Error fetching friends' posts:", error);
+            }
+        };
+        
         handleLoadPost();
-    }, []);
+    }, [token]);
 
     return(
         <>
@@ -42,7 +42,7 @@ export const HomePage = () => {
                                 <DisplayPost id={post.id} username={post.username} text={post.text} image_path={post.image_path} created_at={post.created_at}/>
                             ))
                         ) : (
-                            <p>No posts available</p>
+                            <p className="text-center pt-3">No posts available</p>
                         )}
                     </div>
                 </div>
