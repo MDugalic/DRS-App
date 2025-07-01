@@ -1,34 +1,39 @@
 services:
-  frontend:
-    build:
-      context: ./client
-    ports:
-      - "3000:80"
-    networks:
-      - app-network
+  # frontend:
+  #   build:
+  #     context: ./client
+  #   ports:
+  #     - "3000:80"
+  #   networks:
+  #     - app-network
 
   backend:
     build:
       context: ./flask-engine
+    # command: python scripts/create_admin.py
     ports:
       - "5000:5000"
     environment:
       - FLASK_ENV=development
       - DATABASE_HOST=db
+      - DATABASE_USER=postgres
+      - DATABASE_PASSWORD=postgres
+      - DATABASE_NAME=drs_db
     depends_on:
       - db
     networks:
       - app-network
 
   db:
-    image: mysql:8.0
+    image: postgres:17
     ports:
-      - "3307:3306"
+      - "5433:5432"
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: drs_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: drs_db
     volumes:
-      - db-data:/var/lib/mysql
+      - db-data:/var/lib/postgresql/data
     networks:
       - app-network
 

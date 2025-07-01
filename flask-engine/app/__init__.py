@@ -1,5 +1,5 @@
 from flask import Flask
-from flask_login import LoginManager, UserMixin, login_required, login_user, current_user, logout_user
+from flask_login import LoginManager
 from flask_smorest import Api
 from flask_migrate import Migrate
 from .routes.users import users_bp
@@ -60,7 +60,10 @@ def init_swagger(app):
     app.config["OPENAPI_SWAGGER_UI_URL"] = "https://cdn.jsdelivr.net/npm/swagger-ui-dist/"
 
 def configure_db(app, db_url=None):
-    app.config['SQLALCHEMY_DATABASE_URI'] = db_url or os.getenv("DATABASE_URL", "mysql://root:root@db:3306/drs_db")
+    app.config['SQLALCHEMY_DATABASE_URI'] = db_url or os.getenv(
+        "DATABASE_URL", 
+        "postgresql://postgres:postgres@db:5432/drs_db"
+    )
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
 

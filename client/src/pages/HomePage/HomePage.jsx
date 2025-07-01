@@ -11,17 +11,14 @@ export const HomePage = () => {
     const token = localStorage.getItem('access_token');
     const [posts, setPosts] = useState([]);
 
-    const handleLoadPost = async (event) => {
+    const handleLoadPost = async () => {
         try {
-
-            const userId = 1; // Replace with the actual user ID you want to query
             const response = await axios.get(urlPostsGetFriends, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-            console.log(response.data)
-            setPosts(response.data)
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            setPosts(response.data);
         } catch (error) {
             console.error("Error fetching friends' posts:", error);
         }
@@ -29,7 +26,7 @@ export const HomePage = () => {
 
     useEffect(() => {
         handleLoadPost();
-    }, [])
+    }, []);
 
     return(
         <>

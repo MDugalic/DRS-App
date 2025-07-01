@@ -24,12 +24,15 @@ const getUserRole = async () => {
   if (!token) return null;
 
   try {
+    console.log("Making request to /get_current_user");
     const response = await axios.get('/get_current_user', {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-    return response.data.role; // Extract the role from the user data
+    
+    console.log("Full user data from API:", response.data); // Log the entire response
+    // return response.data; // Extract the role from the user data
   } catch (error) {
     console.error("Error fetching user data:", error);
     return null;
