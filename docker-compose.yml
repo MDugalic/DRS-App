@@ -21,6 +21,10 @@ services:
       - DATABASE_NAME=drs_db
     depends_on:
       - db
+    volumes:
+      - type: bind
+        source: ./uploads
+        target: /app/uploads
     networks:
       - app-network
 
