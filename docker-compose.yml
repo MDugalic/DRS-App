@@ -1,11 +1,11 @@
 services:
-  # frontend:
-  #   build:
-  #     context: ./client
-  #   ports:
-  #     - "3000:80"
-  #   networks:
-  #     - app-network
+  frontend:
+    build:
+      context: ./client
+    ports:
+      - "3000:80"
+    networks:
+      - app-network
 
   backend:
     build:
