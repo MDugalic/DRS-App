@@ -23,16 +23,23 @@ export const CreateUserPage = () => {
     password: '',
   };
 
+  const optionalFieldStyle = {
+    fontStyle: 'italic',
+    fontSize: '0.85rem',
+    color: '#87929c'
+  };
+
   const [formData, setFormData] = useState(initialFormData);
   const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const isValidInput = (name, value) => {
-    const noNumberFields = ["city", "first_name", "last_name", "country"];
-    if (noNumberFields.includes(name) && /\d/.test(value)) {
-      return false;
-    }
-    return true;
-  };
+  // const isValidInput = (name, value) => {
+  //   const noNumberFields = ["city", "first_name", "last_name", "country"];
+  //   if (noNumberFields.includes(name) && /\d/.test(value)) {
+  //     return false;
+  //   }
+  //   return true;
+  // };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -68,9 +75,8 @@ export const CreateUserPage = () => {
     }
 
     setErrors({}); // Clear errors if validation passes
-    console.log(formData);
+    setIsSubmitting(true);
 
-    // send to API
     try {
       const response = await axios.post(`${urlRegister}`, formData, {
         headers: {
@@ -84,21 +90,20 @@ export const CreateUserPage = () => {
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
-        theme: "dark", // Matches your dark theme
+        theme: "dark",
       });
       console.log('User registered successfully:', response.data);
-      // Redirect, show success message, or clear the form here
       setFormData(initialFormData);
     } catch (error) {
       console.error('There was an error registering the user:', error);
       if (error.response) {
-        // If the server responds with a status code outside the 2xx range
         console.error('Error response:', error.response);
         setErrors({ server: 'An error occurred while registering the user. Please try again later.' });
       } else {
-        // If the error is not related to the server (e.g., network error)
         setErrors({ server: 'Network error. Please check your connection.' });
       }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -144,7 +149,9 @@ export const CreateUserPage = () => {
 
           {/* Address */}
           <Form.Group className="mb-3" controlId="address">
-            <Form.Label>Address</Form.Label>
+            <Form.Label>
+              Address <span style={optionalFieldStyle}>(optional)</span>
+            </Form.Label>
             <Form.Control
               type="text"
               name="address"
@@ -159,7 +166,9 @@ export const CreateUserPage = () => {
 
           {/* City */}
           <Form.Group className="mb-3" controlId="city">
-            <Form.Label>City</Form.Label>
+            <Form.Label>
+              City <span style={optionalFieldStyle}>(optional)</span>
+            </Form.Label>
             <Form.Control
               type="text"
               name="city"
@@ -174,7 +183,9 @@ export const CreateUserPage = () => {
 
           {/* Country */}
           <Form.Group className="mb-3" controlId="country">
-            <Form.Label>Country</Form.Label>
+            <Form.Label>
+              Country <span style={optionalFieldStyle}>(optional)</span>
+            </Form.Label>
             <Form.Control
               type="text"
               name="country"
@@ -189,7 +200,9 @@ export const CreateUserPage = () => {
 
           {/* Phone Number */}
           <Form.Group className="mb-3" controlId="phone_number">
-            <Form.Label>Phone Number</Form.Label>
+            <Form.Label>
+              Phone Number <span style={optionalFieldStyle}>(optional)</span>
+            </Form.Label>
             <Form.Control
               type="text"
               name="phone_number"
@@ -254,8 +267,10 @@ export const CreateUserPage = () => {
             </div>
           )}
 
-          <Button className="d-flex mx-auto" variant="primary" type="submit">
-            Submit
+          <Button className="d-flex mx-auto" variant="primary" 
+            type="submit" disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Submitting...' : 'Submit'}
           </Button>
         </Form>
       </div>

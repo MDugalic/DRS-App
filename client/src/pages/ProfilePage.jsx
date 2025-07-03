@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useParams, Link } from 'react-router-dom'; // To capture the username from the URL
-import './styles.css';  // Import the CSS file for styling
-import Button from 'react-bootstrap/Button'; // Importing Button from react-bootstrap
-import { FaPencilAlt } from 'react-icons/fa'; // Importing FontAwesome Pencil icon
+import { useParams, Link } from 'react-router-dom';
+import './styles.css';
+import Button from 'react-bootstrap/Button';
+import { FaPencilAlt } from 'react-icons/fa';
 import { Header } from '../components/Header/Header';
 import {urlProfile, urlFriendsIsFriend, urlFriendsRequestStatus, urlFriendsSendRequest, urlFriendsRemoveFriend} from '../apiEndpoints';
 
 const ProfilePage = () => {
-  const { username } = useParams();  // Capture the username from the URL
+  const { username } = useParams();
 
   const [userData, setUserData] = useState(null);
-  const [posts, setPosts] = useState([]);  // Defaulting to an empty array
+  const [posts, setPosts] = useState([]);
   const [isCurrentUser, setIsCurrentUser] = useState(false);
-  const [isFriend, setIsFriend] = useState(false);  // Track friendship status
-  const [requestStatus, setRequestStatus] = useState(null); // Track the status of the friend request
-  const [loading, setLoading] = useState(true); // Track loading state
+  const [isFriend, setIsFriend] = useState(false);
+  const [requestStatus, setRequestStatus] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   // Load user data and posts
   useEffect(() => {
@@ -28,7 +28,6 @@ const ProfilePage = () => {
 
     const fetchData = async () => {
       try {
-        // Fetch user profile data
         const userResponse = await axios.get(`${urlProfile}/${username}`, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -39,7 +38,7 @@ const ProfilePage = () => {
         setPosts(Array.isArray(posts) ? posts : []); // Ensure posts is an array
         setIsCurrentUser(is_current_user);
         // Fetch friendship status
-        const friendResponse = await axios.get(`${urlFriendsIsFriend}${user.id}`, {
+        const friendResponse = await axios.get(`${urlFriendsIsFriend}/${user.id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -73,7 +72,6 @@ const ProfilePage = () => {
     })
     .then(response => {
       if (response.data) {
-        console.log(response.data);
         setIsFriend(true); // Update friendship status
         setRequestStatus('pending'); // Update request status
       }
@@ -88,15 +86,13 @@ const ProfilePage = () => {
   };
 
   const handleRemoveFriend = () => {
-    // Remove friend logic (e.g., send a POST request to remove friend)
     axios.post(`${urlFriendsRemoveFriend}/${userData.id}`, {}, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('access_token')}`,
       },
     })
-    .then(response => {
-      console.log(response.data);
-      setIsFriend(false); // Update friendship status
+    .then(() => {
+      setIsFriend(false);
       setRequestStatus(null);
     })
     .catch(error => {
@@ -182,10 +178,22 @@ const ProfilePage = () => {
         ) : (
           posts.map(post => (
             <div key={post.id} className="post">
-              <div className="post-created-at">{formatDate(post.created_at)}</div>
-              <p className="post-username">{post.username}</p>
-              <p className="post-text">{post.text}</p>
-              {post.image_path && (<div className="image-preview"><img src={`http://localhost:5000/posts/${post.image_path.replace(/\\/g, '/')}`} alt="Post" /></div>)}
+                {post.approved === 'Pending' && (
+                    <div className="post-is-pending">(pending)</div>
+                )}
+                <div className="post-created-at">{formatDate(post.created_at)}</div>
+                <p className="post-username">{post.username}</p>
+                <p 
+                    className="post-text"
+                    style={post.approved === 'Pending' ? { marginTop: '40px' } : {}}
+                >
+                    {post.text}
+                </p>
+                {post.image_path && (
+                    <div className="image-preview">
+                        <img src={`http://localhost:5000/posts/${post.image_path.replace(/\\/g, '/')}`} alt="Post" />
+                    </div>
+                )}
             </div>
           ))
         )}

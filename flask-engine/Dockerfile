@@ -5,6 +5,7 @@ RUN apt-get update && apt-get install -y \
     pkg-config \
     default-libmysqlclient-dev \
     build-essential \
+    postgresql-client \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 

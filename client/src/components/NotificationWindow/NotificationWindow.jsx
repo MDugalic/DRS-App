@@ -5,7 +5,7 @@ import './styles.css';
 import {urlFriendsGetRequests} from '../../apiEndpoints';
 
 
-export const NotificationWindow = ({ isVisible }) => {
+export const NotificationWindow = ({ isVisible, onFriendRequestUpdate  }) => {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -32,9 +32,10 @@ export const NotificationWindow = ({ isVisible }) => {
   }, [isVisible]);
 
   const updateNotifications = (id) => {
-    setNotifications((prevNotifications) => 
-      prevNotifications.filter(notification => notification.id !== id)
-    );
+    setNotifications(prev => prev.filter(n => n.id !== id));
+    if (onFriendRequestUpdate) {
+      onFriendRequestUpdate();
+    }
   };
   
   if (!isVisible) return null;

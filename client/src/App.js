@@ -29,6 +29,7 @@ const getUserRole = async () => {
         Authorization: `Bearer ${token}`,
       },
     });
+    
     return response.data.role; // Extract the role from the user data
   } catch (error) {
     console.error("Error fetching user data:", error);
@@ -43,22 +44,32 @@ const ProtectedRoute = ({ children }) => {
 
 // Admin Route for Admin Users Only
 const AdminRoute = ({ children }) => {
-  const [userRole, setUserRole] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [authChecked, setAuthChecked] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    const fetchRole = async () => {
-      const role = await getUserRole();
-      setUserRole(role);
-      setLoading(false);
+    const checkAuth = async () => {
+      if (!isAuthenticated()) {
+        setAuthChecked(true);
+        return;
+      }
+
+      try {
+        const role = await getUserRole();
+        setIsAdmin(role === 'admin');
+      } catch (error) {
+        console.error("Auth check failed:", error);
+      } finally {
+        setAuthChecked(true);
+      }
     };
-    fetchRole();
+
+    checkAuth();
   }, []);
 
-  if (loading) return <div></div>;
-
-  if (!isAuthenticated()) return <Navigate to="/login" />; // Not logged in
-  if (userRole !== 'admin') return <Navigate to="/" />; // Not an admin
+  if (!authChecked) return <div></div>;
+  if (!isAuthenticated()) return <Navigate to="/login" />;
+  if (!isAdmin) return <Navigate to="/" />;
 
   return children;
 };
@@ -86,7 +97,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/update",
+    path: "/profile/update",
     element: (
       <ProtectedRoute>
         <UpdateUserPage />

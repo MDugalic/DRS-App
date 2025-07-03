@@ -19,7 +19,7 @@ with app.app_context():
         admin_user = User(
             first_name="Admin",
             last_name="Admin",
-            email="admin@example.com",
+            email="admin@admin.com",
             username="admin",
             password="admin",
             role="admin",

@@ -54,12 +54,19 @@ hr {
 }
 .profile-header {
     display: flex;
-    /* Arrange user-info and edit-icon side by side */
     align-items: flex-start;
-    /* Align items at the top */
     gap: 10px;
-    /* Space between user-info and icon */
 }
+
+.post-is-pending {
+    position: absolute;
+    font-style: italic;
+    top: 35px;
+    left: 10px;
+    color: rgb(255, 179, 38); 
+    font-size: 14px;
+}
+
 .post-created-at {
     position: absolute;
     top: 10px;
@@ -72,18 +79,13 @@ hr {
     position: absolute;
     top: 10px;
     left: 10px;
-    /* Align to the left of the post */
     font-weight: bold;
-    /* Dark gray color for the username */
     font-size: 18px;
-    /* Adjust size as necessary */
 }
 
-/* Ensure the text inside the post doesn't overlap with other elements */
 .post-text {
     margin-top: 20px;
-    color:#ccc
-    /* Adjust margin-top to avoid overlap with top elements */
+    color:#e9e9e9;
 }
 
 .post {
@@ -97,22 +99,15 @@ hr {
 
 .user-info {
     display: inline-block;
-    /* Let it take only as much space as it needs */
     padding: 10px;
-    /* Optional: Add some padding for better visuals */
-    /* Optional: Add a border to visualize the container */
 }
 
 .edit-icon {
     display: flex;
-    /* Ensure icon stays centered */
     align-items: center;
-    /* Align vertically */
     justify-content: center;
-    /* Align horizontally if needed */
     margin-top: 50px;
     padding: 5px;
-    /* Optional: Add some padding */
     z-index: 1;
 }
 
@@ -160,35 +155,27 @@ hr {
 
 .approve-button:hover {
     background-color: #28a745;
-    /* Green hover effect for Approve */
     transform: scale(1.05);
-    /* Slight zoom on hover */
 }
 
 .deny-button:hover {
     background-color: #dc3545;
-    /* Red hover effect for Deny */
     transform: scale(1.05);
-    /* Slight zoom on hover */
 }
 
 /* Styling for the disabled buttons */
 button:disabled {
     background-color: #ccc;
-    /* Lighter color for disabled state */
     cursor: not-allowed;
-    /* Make the cursor show that it's not clickable */
     opacity: 0.6;
 }
 
 button.approve-button:disabled {
     background-color: #6c757d;
-    /* Darker shade for the approve button when disabled */
 }
 
 button.deny-button:disabled {
     background-color: #dc3545;
-    /* Darker shade for the deny button when disabled */
 }
 
 .image-preview {
@@ -215,6 +202,8 @@ button.deny-button:disabled {
     overflow-y: auto;
 }
 
+/* BLOCKIST */
+
 .blocklist-page {
     padding-top: calc(50px + 20px);
     margin-left: 20vw;
@@ -229,11 +218,8 @@ button.deny-button:disabled {
 .blocked-user {
     display: flex;
     justify-content: flex-start;
-    /* Align items to the start */
     flex-direction: row;
-    /* Keeps the name and button on the same row */
     align-items: center;
-    /* Centers the content vertically */
     border-top: 1px solid #555555;
     padding: 20px;
     padding-left: 10px;

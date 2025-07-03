@@ -1,9 +1,11 @@
 .search-page {
     padding: 20px;
+    padding-top: 40px;
     max-width: 600px;
     margin: auto;
     text-align: center;
 }
+
 
 .search-bar {
     display: flex;
@@ -44,3 +46,21 @@
     color: red;
 }
 
+.pending-indicator {
+  font-style: italic;
+  font-size: 0.85rem;
+  color: #87929c;
+  margin-left: 8px;
+}
+
+.search-match {
+    font-size: 1.5rem;
+}
+
+.match-fields {
+    margin: 4px 0 0 30px;
+    padding: 0;
+    list-style-type: disc;
+    color: rgb(255, 179, 38); 
+    font-size: 0.9em;
+}

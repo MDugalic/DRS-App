@@ -5,8 +5,9 @@ import Form from 'react-bootstrap/Form'
 import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 import addImageIcon from '../../assets/add_image_icon_white.png';
 import trashIcon from '../../assets/trash_icon_white.png';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import "./styles.css";
-import {urlPostsCreate} from '../../apiEndpoints';
 
 
 export const CreatePost = () => {
@@ -15,6 +16,7 @@ export const CreatePost = () => {
     const [selectedImage, setSelectedImage] = useState(null);
     const [postContent, setPostContent] = useState("");
     const [charCount, setCharCount] = useState(0);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const postMaxLength = 200;
 
     const handleAddImageClick = () => {
@@ -45,7 +47,8 @@ export const CreatePost = () => {
     };
 
     const handleSubmit = async (event) => {
-        event.preventDefault(); // Prevent the form from reloading the page
+        event.preventDefault();
+        setIsSubmitting(true);
 
         const formData = new FormData();
         formData.append("text", postContent);
@@ -63,18 +66,44 @@ export const CreatePost = () => {
             });
 
             if (!response.ok) {
-                alert("Error creating post");
-                console.log(response);
-            }else{
-                 // Reset textarea content and character count after successful post creation
-                setPostContent(""); // Clear the textarea content
-                setCharCount(0); // Reset character count
-                textareaRef.current.style.height = "auto"; // Reset textarea height
-                fileInputRef.current.value = ''; // Clear file input if an image was selected
-                setSelectedImage(null); // Clear image preview
+                toast.error("Error creating post", {
+                    position: "top-center",
+                    autoClose: 3000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    theme: "dark",
+                });
+            } else {
+                toast.success("Post sent to admin review", {
+                    position: "top-center",
+                    autoClose: 3000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    theme: "dark",
+                });
+                setPostContent("");
+                setCharCount(0);
+                textareaRef.current.style.height = "auto";
+                fileInputRef.current.value = '';
+                setSelectedImage(null);
             }
         } catch (error) {
+            toast.error("Network error. Please try again.", {
+                position: "top-center",
+                autoClose: 3000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                theme: "dark",
+            });
             console.error("Error submitting form:", error);
+        } finally {
+            setIsSubmitting(false); // Re-enable button
         }
     };
 
@@ -153,9 +182,16 @@ export const CreatePost = () => {
                         onChange={handleImageChange}
                     />
 
-                    <Button variant="primary" type="submit">Post</Button>
+                   <Button 
+                        variant="primary" 
+                        type="submit"
+                        disabled={isSubmitting || !postContent.trim()}
+                    >
+                        {isSubmitting ? 'Posting...' : 'Post'}
+                    </Button>
                 </div>
             </Form>
+            <ToastContainer />
         </div>
     );
 };

@@ -10,6 +10,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity, unset_jwt_cookies
 from flask_socketio import emit
 from app.socketio_instance import socketio
 from datetime import datetime
+from app.models.friendship import friendship
 bp = Blueprint("posts", __name__)
 
 UPLOAD_FOLDER = 'uploads'
@@ -112,25 +113,62 @@ def get_posts_of_friends():
     user_id = get_jwt_identity()
     if not user_id:
         return {"message": "Bad request"}, 400
-    user = User.query.get_or_404(user_id)
-    friends_list = user.friends.union(user.friend_of).all()
-    posts_by_all_friends = []
     
-    # Collect posts from all friends
-    for friend in friends_list:
-        # Extract the posts for the current friend
-        friend_posts = [{
+    try:
+        print(f"Current user ID: {user_id}")  # Debug logging
+        
+        # Get accepted friendships
+        accepted_friendships = db.session.query(friendship).filter(
+            ((friendship.c.user_id == user_id) | (friendship.c.friend_id == user_id)),
+            friendship.c.is_accepted == True
+        ).all()
+        
+        print(f"Found {len(accepted_friendships)} friendships")  # Debug logging
+        
+        # Extract friend IDs
+        friend_ids = set()
+        for fs in accepted_friendships:
+            if fs.user_id == user_id:
+                friend_ids.add(fs.friend_id)
+            else:
+                friend_ids.add(fs.user_id)
+        
+        print(f"Friend IDs before filtering: {friend_ids}")  # Debug logging
+        friend_ids.discard(user_id)
+        print(f"Friend IDs after filtering: {friend_ids}")  # Debug logging
+
+        # Debug: Check if user_id accidentally appears in friend_ids
+        if user_id in friend_ids:
+            print("ERROR: User ID still in friend_ids after filtering!")
+
+        # Get approved posts from friends
+        posts = Post.query.filter(
+            Post.user_id.in_(friend_ids),
+            Post.approved == "Approved"
+        ).order_by(Post.created_at.desc()).all()
+        
+        print(f"Found {len(posts)} posts from friends")  # Debug logging
+        
+        # Debug: Check if any posts belong to current user
+        user_posts_count = sum(1 for post in posts if post.user_id == user_id)
+        if user_posts_count > 0:
+            print(f"WARNING: Found {user_posts_count} posts from current user in results!")
+
+        posts_list = [{
             "id": post.id,
             "text": post.text,
             "image_path": post.image_path,
             "approved": post.approved,
-            "created_at": post.created_at,
+            "created_at": post.created_at.isoformat(),
             "username": post.username,
-        } for post in friend.posts if post.approved == "Approved"]
+            "user_id": post.user_id  # Include user_id for debugging
+        } for post in posts]
         
-        posts_by_all_friends.extend(friend_posts)  # Combine all friend's posts into the main list
-        posts_by_all_friends = sorted(posts_by_all_friends, key=lambda x: x['created_at'], reverse=True)
-    return jsonify(posts_by_all_friends)
+        return jsonify(posts_list)
+    
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        return {"message": "Internal server error"}, 500
 
 @bp.route('/edit', methods=['PUT'])
 def edit_post():

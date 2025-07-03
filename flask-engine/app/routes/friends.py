@@ -73,7 +73,7 @@ def get_request_count():
 def accept_request(friend_id):
     current_user_id = get_jwt_identity()
 
-    # Find the friend request to accept
+    # Find original friend request
     request = db.session.query(friendship).filter_by(
         user_id=friend_id,
         friend_id=current_user_id,
@@ -83,15 +83,44 @@ def accept_request(friend_id):
     if not request:
         return jsonify({"message": "No friend request found."}), 404
 
-    # Update the friend request status to 'ACCEPTED'
+    # Accept original request
     db.session.execute(
         friendship.update()
-        .where(friendship.c.user_id == friend_id, friendship.c.friend_id == current_user_id)
+        .where(
+            (friendship.c.user_id == friend_id) &
+            (friendship.c.friend_id == current_user_id)
+        )
         .values(is_accepted=True)
     )
-    db.session.commit()
 
+    # Check for reverse entry, and insert if missing
+    reverse = db.session.query(friendship).filter_by(
+        user_id=current_user_id,
+        friend_id=friend_id
+    ).first()
+
+    if not reverse:
+        db.session.execute(
+            friendship.insert().values(
+                user_id=current_user_id,
+                friend_id=friend_id,
+                is_accepted=True
+            )
+        )
+    else:
+        # If reverse exists but wasn't accepted, mark as accepted
+        db.session.execute(
+            friendship.update()
+            .where(
+                (friendship.c.user_id == current_user_id) &
+                (friendship.c.friend_id == friend_id)
+            )
+            .values(is_accepted=True)
+        )
+
+    db.session.commit()
     return jsonify({"message": "Friend request accepted."}), 200
+
 
 
 @friends_bp.route('/reject_request/<int:friend_id>', methods=['POST'])
@@ -167,14 +196,37 @@ def is_friend(user_id):
 
     return jsonify({"is_friend": is_friend}), 200
 
-
 @friends_bp.route('/get_all', methods=['GET'])
 @jwt_required()
 def get_all():
-    current_user_id = get_jwt_identity()
-    current_user = User.query.get(current_user_id)
-    friends = current_user.friends.all()  # Make sure you have the relationship set up
-    return jsonify([{"id": friend.id, "username": friend.username} for friend in friends])
+    current_user_id = int(get_jwt_identity())
+    
+    # Get all friendships (both directions)
+    friendships = db.session.query(friendship).filter(
+        ((friendship.c.user_id == current_user_id) | 
+         (friendship.c.friend_id == current_user_id)),
+        friendship.c.is_accepted == True
+    ).all()
+
+    # Collect friend IDs with explicit self-friend check
+    friend_ids = []
+    for f in friendships:
+        if f.user_id == current_user_id:
+            if f.friend_id != current_user_id:
+                friend_ids.append(f.friend_id)
+        else:
+            if f.user_id != current_user_id:
+                friend_ids.append(f.user_id)
+
+    # Get unique friends and their details
+    unique_friend_ids = list(set(friend_ids))  # Remove duplicates
+    friends = User.query.filter(User.id.in_(unique_friend_ids)).all()
+    
+    return jsonify([{
+        "id": friend.id, 
+        "username": friend.username
+    } for friend in friends])
+
 
 # New method to track friend request status
 @friends_bp.route('/request_status/<int:friend_id>', methods=['GET'])
@@ -202,3 +254,16 @@ def request_status(friend_id):
         return jsonify({"status": "received"}), 200
     else:
         return jsonify({"status": "not friends"}), 200
+    
+
+# Helper method if two-way friends logic fails
+def get_all_friends(user_id):
+    friendships = db.session.query(friendship).filter(
+        ((friendship.c.user_id == user_id) | (friendship.c.friend_id == user_id)) &
+        (friendship.c.is_accepted == True)
+    ).all()
+
+    friend_ids = [
+        f.friend_id if f.user_id == user_id else f.user_id for f in friendships
+    ]
+    return User.query.filter(User.id.in_(friend_ids)).all()

@@ -31,7 +31,8 @@ class CreatePostSchema(Schema):
 
 # Schema for adding/removing a friend
 class FriendActionSchema(Schema):
-    friend_id = fields.Int(required=True, description="ID of the friend to add or remove")
+    friend_id = fields.Int(required=True, metadata={"description": "ID of the friend to add or remove"})
+
 
 # Schema for displaying a user's friend
 class FriendSchema(Schema):
