@@ -12,3 +12,4 @@ flask-jwt-extended
 passlib
 flask-mail
 flask_socketio
+gunicorn==20.1.0

@@ -59,10 +59,13 @@ def init_swagger(app):
     app.config["OPENAPI_SWAGGER_UI_URL"] = "https://cdn.jsdelivr.net/npm/swagger-ui-dist/"
 
 def configure_db(app, db_url=None):
-    app.config['SQLALCHEMY_DATABASE_URI'] = db_url or os.getenv(
-        "DATABASE_URL", 
-        "postgresql://postgres:postgres@db:5432/drs_db"
-    )
+    db_url = db_url or os.getenv("DATABASE_URL")
+    
+    # Convert Render's postgres:// to postgresql://
+    if db_url and db_url.startswith("postgres://"):
+        db_url = db_url.replace("postgres://", "postgresql://", 1)
+        
+    app.config['SQLALCHEMY_DATABASE_URI'] = db_url
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
 
