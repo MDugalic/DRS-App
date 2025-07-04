@@ -23,6 +23,5 @@ RUN rm -rf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/build /usr/share/nginx/html
 # Copy the nginx config template
 COPY nginx.conf /etc/nginx/templates/default.conf.template
-EXPOSE $PORT
+EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
-
