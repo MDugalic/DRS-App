@@ -61,7 +61,6 @@ def init_swagger(app):
 def configure_db(app, db_url=None):
     db_url = db_url or os.getenv("DATABASE_URL")
     
-    # Convert Render's postgres:// to postgresql://
     if db_url and db_url.startswith("postgres://"):
         db_url = db_url.replace("postgres://", "postgresql://", 1)
         
