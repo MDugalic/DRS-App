@@ -12,8 +12,12 @@ export const LoginPage = () => {
     const [errorMessage, setErrorMessage] = useState("");  //CHANGE HERE: State for error message
     const navigate = useNavigate();
     
-    // Redirect if the user is already logged in
     useEffect(() => {
+        const searchParams = new URLSearchParams(window.location.search);
+        if (searchParams.get('message') === 'account_blocked') {
+            setErrorMessage("Your account is blocked. Please contact support.");
+        }
+
         const token = localStorage.getItem('access_token');
         if (token) {
             navigate("/");  // Redirect to home if the user is already logged in
@@ -38,12 +42,12 @@ export const LoginPage = () => {
             if (error.response && error.response.data) {
                 //CHANGE HERE: Handle error if user is blocked
                 if (error.response.data.message === "Account is blocked.") {
-                    setErrorMessage("Your account is blocked. Please contact support.");  //CHANGE HERE: Set error message
+                    setErrorMessage("Your account is blocked. Please contact support.");
                 } else {
-                    setErrorMessage("Invalid username or password.");  //CHANGE HERE: Generic error message
+                    setErrorMessage("Invalid username or password.");
                 }
             } else {
-                setErrorMessage("An error occurred. Please try again later.");  //CHANGE HERE: General error handling
+                setErrorMessage("An error occurred. Please try again later.");
             }
             console.error("Error sending login data:", error.response.data);
         }

@@ -8,8 +8,9 @@ const PostApprovalPage = () => {
     const [pendingPosts, setPendingPosts] = useState([]);
 
     useEffect(() => {
-        const socket = io(`${API_URL}`);
-
+        const socket = io(API_URL, {
+            transports: ['websocket'],
+          });
         // Request the pending posts from the server
         socket.emit("get_pending_posts");
 

@@ -55,16 +55,29 @@ export const CreateUserPage = () => {
     }));
   };
 
-  const validateFields = () => {
-    const newErrors = {};
-    const requiredFields = ["first_name", "last_name", "email", "username", "password"];
-    Object.keys(formData).forEach((key) => {
-      if (requiredFields.includes(key) && !formData[key].trim()) {
-        newErrors[key] = `${key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ')} is required`;
-      }
-    });
-    return newErrors;
-  };
+  const validateEmail = (email) => {
+  // Basic email validation that requires @ and at least one . after @
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return re.test(email);
+};
+
+
+const validateFields = () => {
+  const newErrors = {};
+  const requiredFields = ["first_name", "last_name", "email", "username", "password"];
+  
+  Object.keys(formData).forEach((key) => {
+    if (requiredFields.includes(key) && !formData[key].trim()) {
+      newErrors[key] = `${key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ')} is required`;
+    }
+  });
+
+  if (formData.email && !validateEmail(formData.email)) {
+    newErrors.email = "Please enter a valid email address";
+  }
+
+  return newErrors;
+};
 
   const register = async (event) => {
     event.preventDefault();

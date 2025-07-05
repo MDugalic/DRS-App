@@ -8,6 +8,7 @@ import trashIcon from '../../assets/trash_icon_white.png';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import "./styles.css";
+import {urlPostsCreate} from '../../apiEndpoints';
 
 
 export const CreatePost = () => {
@@ -57,13 +58,34 @@ export const CreatePost = () => {
         }
 
         try {
-            const response = await fetch("/posts/create", {
+            const response = await fetch(urlPostsCreate, {
                 method: "POST",
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('access_token')}`
                 },
                 body: formData,
             });
+
+            if (response.status === 403) {
+                toast.error("Your account has been blocked", {
+                    position: "top-center",
+                    autoClose: 3000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    theme: "dark",
+                });
+
+                // Add 1-second delay before logout
+                setTimeout(() => {
+                    localStorage.removeItem('access_token');
+                    window.location.href = '/login?message=account_blocked';
+                }, 1000);
+                
+                return;
+            }
+
 
             if (!response.ok) {
                 toast.error("Error creating post", {
@@ -74,7 +96,7 @@ export const CreatePost = () => {
                     pauseOnHover: true,
                     draggable: true,
                     theme: "dark",
-                });
+            });
             } else {
                 toast.success("Post sent to admin review", {
                     position: "top-center",

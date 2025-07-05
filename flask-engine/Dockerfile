@@ -16,4 +16,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application
 COPY . .
 
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
+CMD ["gunicorn", "--worker-class", "eventlet", "--bind", "0.0.0.0:5000", "run:app"]
