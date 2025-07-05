@@ -13,6 +13,13 @@ import { SearchPage } from './pages/SearchPage/SearchPage';
 import axios from 'axios';
 import PostApprovalPage from './pages/PostApprovalPage';
 import {urlGetCurrentUser} from './apiEndpoints';
+import { io } from 'socket.io-client';
+import { API_URL } from './apiEndpoints';
+
+const socket = io(API_URL, {
+  withCredentials: true,
+  autoConnect: false     
+});
 
 // Dummy function to check if the user is authenticated
 const isAuthenticated = () => {
@@ -152,7 +159,80 @@ const router = createBrowserRouter([
   }
 ]);
 
+const getCurrentUserId = () => {
+  const token = localStorage.getItem('access_token');
+  if (!token) return null;
+  
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.identity || payload.sub;
+  } catch (e) {
+    console.error('Failed to decode JWT:', e);
+    return null;
+  }
+};
+
+const initializeSocket = (userId) => {
+  const socket = io(API_URL, {
+    withCredentials: true,
+    autoConnect: true
+  });
+
+  socket.on('connect', () => {
+    socket.emit('join_user_room', { userId });
+  });
+
+  socket.on('force_logout', (data) => {
+    console.log('Received force_logout event', data);
+    localStorage.setItem('force_logout', Date.now());
+    performLogout(data.reason);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('Socket disconnected');
+  });
+
+  return socket;
+};
+
+const performLogout = (reason = '') => {
+  // Clear all auth tokens
+  localStorage.removeItem('access_token');
+  sessionStorage.removeItem('access_token');
+  
+  // Clear cookies if used
+  document.cookie = 'access_token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+  
+  // Disconnect socket if exists
+  if (socket) socket.disconnect();
+  
+  // Redirect with reason
+  window.location.href = `/login?message=${encodeURIComponent(reason)}`;
+};
+
 function App() {
+    const [socket, setSocket] = useState(null);
+
+  useEffect(() => {
+    if (isAuthenticated()) {
+      const userId = getCurrentUserId();
+      const sock = initializeSocket(userId);
+      setSocket(sock);
+
+      const handleStorageChange = (e) => {
+        if (e.key === 'force_logout') {
+          performLogout('session_ended_other_tab');
+        }
+      };
+      window.addEventListener('storage', handleStorageChange);
+
+      return () => {
+        sock?.disconnect();
+        window.removeEventListener('storage', handleStorageChange);
+      };
+    }
+  }, []);
+
   return (
     <div className="bg-dark text-light" style={{ minHeight: "100vh" }}>
       <RouterProvider router={router} />

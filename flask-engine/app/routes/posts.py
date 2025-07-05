@@ -6,11 +6,13 @@ from app.models import Post
 from app.models import User
 from app.services.mail_service import EmailService
 from app.database import db
-from flask_jwt_extended import jwt_required, get_jwt_identity, unset_jwt_cookies
+from flask_jwt_extended import get_jwt, jwt_required, get_jwt_identity, unset_jwt_cookies
 from flask_socketio import emit
 from app.socketio_instance import socketio
 from datetime import datetime
 from app.models.friendship import friendship
+from app.blocklist import BLOCKLIST
+
 bp = Blueprint("posts", __name__)
 
 UPLOAD_FOLDER = 'uploads'
@@ -26,12 +28,15 @@ def create_post():
     user = User.query.filter(
         User.id == user_id
     ).first()
+
+    if not user:
+        return {"message": "User not found."}, 404
+    if user.is_blocked:
+        return {"message": "Account is blocked. Cannot create posts."}, 403
+    
     username = user.username
     text = request.form.get('text')
     image = request.files.get('image')
-
-    if user_id is None:
-        return {"message": "Not logged in."}, 400
 
     if not text and not image:
         return {"message": "The data is empty. Please provide either text or an image."}, 400
@@ -317,10 +322,24 @@ def deny_post(post_id):
     if post_user.denied_posts > 3:
         post_user.is_blocked = True
         db.session.commit()
+
+        jti = get_jwt()["jti"] # This gets the current token's jti
+        BLOCKLIST.add(jti)
+        
         EmailService.send_email(
             post_user.email,
             "Account Blocked",
             f"Dear {post_user.username},\n\nYour account has been blocked due to multiple denied posts."
+        )
+
+        # logout via Socket.IO
+        emit('force_logout', 
+            {
+                "reason": "account_blocked",
+                "message": "Your account has been blocked due to multiple denied posts"
+            },
+            room=f"user_{post_user.id}",
+            namespace='/'
         )
 
     # Notify clients about the updated post

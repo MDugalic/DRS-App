@@ -66,6 +66,27 @@ export const CreatePost = () => {
                 body: formData,
             });
 
+            if (response.status === 403) {
+                toast.error("Your account has been blocked", {
+                    position: "top-center",
+                    autoClose: 3000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    theme: "dark",
+                });
+
+                // Add 1-second delay before logout
+                setTimeout(() => {
+                    localStorage.removeItem('access_token');
+                    window.location.href = '/login?message=account_blocked';
+                }, 1000);
+                
+                return;
+            }
+
+
             if (!response.ok) {
                 toast.error("Error creating post", {
                     position: "top-center",
@@ -75,7 +96,7 @@ export const CreatePost = () => {
                     pauseOnHover: true,
                     draggable: true,
                     theme: "dark",
-                });
+            });
             } else {
                 toast.success("Post sent to admin review", {
                     position: "top-center",
