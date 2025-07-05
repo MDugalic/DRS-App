@@ -8,6 +8,7 @@ import trashIcon from '../../assets/trash_icon_white.png';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import "./styles.css";
+import {urlPostsCreate} from '../../apiEndpoints';
 
 
 export const CreatePost = () => {
@@ -57,7 +58,7 @@ export const CreatePost = () => {
         }
 
         try {
-            const response = await fetch("/posts/create", {
+            const response = await fetch(urlPostsCreate, {
                 method: "POST",
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('access_token')}`

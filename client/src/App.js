@@ -12,6 +12,7 @@ import { FriendsListPage } from './pages/FriendsListPage/FriendsListPage';
 import { SearchPage } from './pages/SearchPage/SearchPage';
 import axios from 'axios';
 import PostApprovalPage from './pages/PostApprovalPage';
+import {urlGetCurrentUser} from './apiEndpoints';
 
 // Dummy function to check if the user is authenticated
 const isAuthenticated = () => {
@@ -24,12 +25,12 @@ const getUserRole = async () => {
   if (!token) return null;
 
   try {
-    const response = await axios.get('/get_current_user', {
+    const response = await axios.get(urlGetCurrentUser, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-    
+    console.log("Full user response:", response.data);
     return response.data.role; // Extract the role from the user data
   } catch (error) {
     console.error("Error fetching user data:", error);
