@@ -8,6 +8,7 @@ psycopg2-binary
 flask-migrate
 marshmallow
 flask-cors
+eventlet==0.30.2
 flask-jwt-extended
 passlib
 flask-mail
