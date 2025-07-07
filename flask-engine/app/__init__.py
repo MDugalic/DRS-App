@@ -58,7 +58,16 @@ def create_app(db_url=None):
     api.register_blueprint(users_bp)                 # flask-smorest blueprint is in api
     app.register_blueprint(posts_bp, url_prefix="/posts")  # flask blueprint is in app
     app.register_blueprint(friends_bp, url_prefix="/friends")
-    socketio.init_app(app, cors_allowed_origins="http://localhost:3000")
+    
+    from .socketio_instance import socketio
+    socketio.init_app(
+        app,
+        cors_allowed_origins=[
+            "http://localhost:3000",
+            "https://drs-frontend-7rjq.onrender.com"
+        ],
+        async_mode='eventlet'
+    )
     return app
 
 def init_swagger(app):
