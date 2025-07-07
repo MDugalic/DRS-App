@@ -5,7 +5,7 @@ import './styles.css';
 import Button from 'react-bootstrap/Button';
 import { FaPencilAlt } from 'react-icons/fa';
 import { Header } from '../components/Header/Header';
-import {urlProfile, urlFriendsIsFriend, urlFriendsRequestStatus, urlFriendsSendRequest, urlFriendsRemoveFriend} from '../apiEndpoints';
+import { API_URL, urlProfile, urlFriendsIsFriend, urlFriendsRequestStatus, urlFriendsSendRequest, urlFriendsRemoveFriend} from '../apiEndpoints';
 
 const ProfilePage = () => {
   const { username } = useParams();
@@ -191,7 +191,7 @@ const ProfilePage = () => {
                 </p>
                 {post.image_path && (
                     <div className="image-preview">
-                        <img src={`http://localhost:5000/posts/${post.image_path.replace(/\\/g, '/')}`} alt="Post" />
+                        <img src={`${API_URL}/posts/${post.image_path.replace(/\\/g, '/')}`} alt="Post" />
                     </div>
                 )}
             </div>
