@@ -17,8 +17,7 @@ export const FriendsListPage = () => {
                     'Authorization': `Bearer ${localStorage.getItem('access_token')}`
                 }
             });
-            console.log(response.data); // You can check the structure of the response here
-            setFriends(response.data); // Set the friends data to state
+            setFriends(response.data);
         } catch (error) {
             console.error("Error fetching friends:", error);
         }
