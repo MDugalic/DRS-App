@@ -82,7 +82,7 @@ def init_swagger(app):
 def configure_db(app, db_url=None):
     db_url = db_url or os.getenv("DATABASE_URL")
     
-    if db_url and db_url.startswith("postgres://"):
+    if db_url and db_url.startswith("postgres://"): # render stuff
         db_url = db_url.replace("postgres://", "postgresql://", 1)
         
     app.config['SQLALCHEMY_DATABASE_URI'] = db_url

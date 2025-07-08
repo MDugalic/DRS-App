@@ -297,7 +297,6 @@ def deny_post(post_id):
     if not post:
         return {"message": "Post not found."}, 404
 
-    # Update post approval status
     post.approved = "Denied"
     db.session.commit()
 
@@ -319,7 +318,7 @@ def deny_post(post_id):
     db.session.refresh(post_user)
 
     # Check if the user needs to be blocked
-    if post_user.denied_posts > 3:
+    if post_user.denied_posts >= 3:
         post_user.is_blocked = True
         db.session.commit()
 

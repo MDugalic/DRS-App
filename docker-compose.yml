@@ -4,6 +4,9 @@ services:
       context: ./client
     ports:
       - "3000:80"
+    deploy:
+      placement:
+        constraints: [node.role == manager] # node.hostname == laptop1_hostname
     networks:
       - app-network
 
@@ -20,6 +23,9 @@ services:
       - DATABASE_PASSWORD=postgres
       - DATABASE_NAME=drs_db
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/drs_db
+    deploy:
+      placement:
+        constraints: [node.role == worker]
     depends_on:
       - db
     volumes:
@@ -37,6 +43,9 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: drs_db
+    deploy:
+      placement:
+        constraints: [node.role == worker]
     volumes:
       - db-data:/var/lib/postgresql/data
     networks:
