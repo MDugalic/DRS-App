@@ -33,3 +33,6 @@ export const urlUnblockUser = `${API_URL}/unblock_user`;
 export const urlPostsApprove = `${API_URL}/posts/approve`;
 export const urlPostsDeny = `${API_URL}/posts/deny`;
 
+// users
+export const searchUsers = `${API_URL}/search_users`;
+

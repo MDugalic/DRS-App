@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import './styles.css';
 import { Header } from '../../components/Header/Header'
+import { searchUsers } from "../../apiEndpoints";
 
 export const SearchPage = () => {
     const [searchQuery, setSearchQuery] = useState("");
@@ -28,13 +29,14 @@ export const SearchPage = () => {
 
         try {
             const token = localStorage.getItem("access_token");
-            const response = await axios.get(`/search_users`, {
+            const response = await axios.get(searchUsers, {
                 params: { query: searchQuery },
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
             setResults(response.data);
+            console.log(response.data);
         } catch (err) {
             console.error("Error during search:", err);
             setError("Failed to fetch search results. Please try again.");
@@ -87,7 +89,7 @@ export const SearchPage = () => {
                 {error && <p className="error">{error}</p>}
                 
                 <div className="results">
-                    {results.length > 0 ? (
+                    {Array.isArray(results) && results.length > 0 ? (
                         results.map((user) => (
                             <div key={user.id} className="result-item">
                                 <p className="search-match">
@@ -95,8 +97,7 @@ export const SearchPage = () => {
                                         {user.first_name} {user.last_name}
                                     </Link>
                                 </p>
-
-                                {user.match_fields && user.match_fields.length > 0 && (
+                                {Array.isArray(user.match_fields) && user.match_fields.length > 0 && (
                                     <ul className="match-fields">
                                         {user.match_fields.map((field, i) => (
                                             <li key={i}>{field}</li>
@@ -106,11 +107,7 @@ export const SearchPage = () => {
                             </div>
                         ))
                     ) : (
-                        hasSearched && !loading && (
-                            <div className="d-flex justify-content-center mt-4">
-                                <p className="text-muted">No results found.</p>
-                            </div>
-                        )
+                        hasSearched && !loading && <p className="text-muted">No results found.</p>
                     )}
                 </div>
             </div>

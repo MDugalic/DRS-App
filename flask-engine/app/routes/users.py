@@ -232,8 +232,8 @@ def search_users():
     query = request.args.get("query", "").strip().lower()
 
     if not query:
-        return jsonify({"error": "Search query is required."}), 400
-
+        return jsonify([]), 200
+    
     searchable_fields = [
         "username", "email", "address", "phone_number",
         "first_name", "last_name", "city", "country"
@@ -266,4 +266,4 @@ def search_users():
 
     except Exception as e:
         print(f"Error during search: {str(e)}")
-        return jsonify({"error": "Internal server error"}), 500
+        return jsonify([]), 500
