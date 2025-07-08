@@ -33,21 +33,8 @@ export const CreateUserPage = () => {
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // const isValidInput = (name, value) => {
-  //   const noNumberFields = ["city", "first_name", "last_name", "country"];
-  //   if (noNumberFields.includes(name) && /\d/.test(value)) {
-  //     return false;
-  //   }
-  //   return true;
-  // };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    // Block client form typing numbers in certain fields
-    /*if (!isValidInput(name, value)) {
-      return;
-    }*/
 
     setFormData((prevData) => ({
       ...prevData,

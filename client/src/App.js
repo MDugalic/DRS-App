@@ -211,7 +211,7 @@ const performLogout = (reason = '') => {
 };
 
 function App() {
-    const [socket, setSocket] = useState(null);
+  const [, setSocket] = useState(null);
 
   useEffect(() => {
     if (isAuthenticated()) {

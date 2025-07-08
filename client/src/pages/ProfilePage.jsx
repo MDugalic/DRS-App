@@ -161,7 +161,7 @@ const ProfilePage = () => {
         {/* Edit icon only shown if the logged-in user is viewing their own profile */}
         {isCurrentUser && (
           <div className="edit-icon">
-            <Link to="/update" style={{ textDecoration: 'none' }}>
+            <Link to="/profile/update" style={{ textDecoration: 'none' }}>
               <FaPencilAlt size={24} style={{ cursor: 'pointer', color: 'gray' }} />
             </Link>
           </div>

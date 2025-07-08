@@ -9,8 +9,13 @@ import { useNavigate } from 'react-router-dom';
 import { Header } from '../components/Header/Header'
 import {urlGetCurrentUser, urlUpdateProfile} from '../apiEndpoints';
 
-
 export const UpdateUserPage = () => {
+  const optionalFieldStyle = {
+    fontStyle: 'italic',
+    fontSize: '0.85rem',
+    color: '#87929c'
+  };
+
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
@@ -25,58 +30,59 @@ export const UpdateUserPage = () => {
 
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
-  // Fetch the logged-in user's data when the component mounts
+
   useEffect(() => {
-    // Clear any autofilled values
-    setFormData({
-        first_name: '',
-        last_name: '',
-        address: '',
-        city: '',
-        country: '',
-        phone_number: '',
-        email: '',
-        username: '',
-        password: '',
-    });
-
     const fetchUserData = async () => {
-        try {
-            const response = await axios.get(urlGetCurrentUser, {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('access_token')}`
-                }
-            });
+      try {
+        const response = await axios.get(urlGetCurrentUser, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+          }
+        });
 
-            // Populate the form with the current user data
-            setFormData({
-                first_name: response.data.first_name,
-                last_name: response.data.last_name,
-                address: response.data.address,
-                city: response.data.city,
-                country: response.data.country,
-                phone_number: response.data.phone_number,
-                email: response.data.email,
-                username: response.data.username,
-                password: response.data.password, 
-            });
+        setFormData({
+          first_name: response.data.first_name || '',
+          last_name: response.data.last_name || '',
+          address: response.data.address || '',
+          city: response.data.city || '',
+          country: response.data.country || '',
+          phone_number: response.data.phone_number || '',
+          email: response.data.email || '',
+          username: response.data.username || '',
+          password: response.data.password || '', 
+        });
 
-        } catch (error) {
-            console.error("Error fetching user data:", error);
-            // Handle error (e.g., display an error message)
-            setErrors({ server: 'Failed to load user data. Please try again.' });
-        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+        setErrors({ server: 'Failed to load user data. Please try again.' });
+      }
     };
 
     fetchUserData();
-}, []);
+  }, []);
 
-  const isValidInput = (name, value) => {
-    const noNumberFields = ["city", "first_name", "last_name", "country"];
-    if (noNumberFields.includes(name) && /\d/.test(value)) {
-      return false;
+  const validateEmail = (email) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  };
+
+  const validateFields = () => {
+    const newErrors = {};
+    const requiredFields = ["first_name", "last_name", "email", "username", "password"];
+    
+    // Validate required fields
+    requiredFields.forEach((key) => {
+      if (!formData[key]?.trim()) {
+        newErrors[key] = `${key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ')} is required`;
+      }
+    });
+
+    // Validate email format
+    if (formData.email && !validateEmail(formData.email)) {
+      newErrors.email = "Please enter a valid email address";
     }
-    return true;
+
+    return newErrors;
   };
 
   const handleChange = (e) => {
@@ -87,26 +93,15 @@ export const UpdateUserPage = () => {
     }));
   };
 
-  const validateFields = () => {
-    const newErrors = {};
-    Object.keys(formData).forEach((key) => {
-      if (!formData[key].trim()) {
-        newErrors[key] = `${key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ')} is required`;
-      }
-    });
-    return newErrors;
-  };
-
   const updateProfile = async (event) => {
     event.preventDefault();
     const validationErrors = validateFields();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
-      return; // Stop submission if there are validation errors
+      return;
     }
 
-    setErrors({}); // Clear errors if validation passes
-    console.log(formData);
+    setErrors({});
 
     try {
       const response = await axios.put(urlUpdateProfile, formData, {
@@ -117,9 +112,8 @@ export const UpdateUserPage = () => {
       });
       console.log('Profile updated successfully:', response.data);
       navigate(`/profile/${formData.username}`);
-      // Redirect, show success message, or clear the form here
     } catch (error) {
-      console.error('There was an error updating the profile:', error);
+      console.error('Error updating profile:', error);
       if (error.response) {
         setErrors({ server: 'Username/Email already taken. Please try another.' });
       } else {
@@ -145,7 +139,6 @@ export const UpdateUserPage = () => {
                   value={formData.first_name}
                   onChange={handleChange}
                   isInvalid={!!errors.first_name}
-                  autoComplete='off'
                 />
                 <Form.Control.Feedback type="invalid">
                   {errors.first_name}
@@ -171,7 +164,9 @@ export const UpdateUserPage = () => {
 
           {/* Address */}
           <Form.Group className="mb-3" controlId="address">
-            <Form.Label>Address</Form.Label>
+            <Form.Label>
+              Address <span style={optionalFieldStyle}>(optional)</span>
+            </Form.Label>
             <Form.Control
               type="text"
               name="address"
@@ -186,7 +181,9 @@ export const UpdateUserPage = () => {
 
           {/* City */}
           <Form.Group className="mb-3" controlId="city">
-            <Form.Label>City</Form.Label>
+            <Form.Label>
+              City <span style={optionalFieldStyle}>(optional)</span>
+            </Form.Label>
             <Form.Control
               type="text"
               name="city"
@@ -201,7 +198,9 @@ export const UpdateUserPage = () => {
 
           {/* Country */}
           <Form.Group className="mb-3" controlId="country">
-            <Form.Label>Country</Form.Label>
+            <Form.Label>
+              Country <span style={optionalFieldStyle}>(optional)</span>
+            </Form.Label>
             <Form.Control
               type="text"
               name="country"
@@ -216,7 +215,9 @@ export const UpdateUserPage = () => {
 
           {/* Phone Number */}
           <Form.Group className="mb-3" controlId="phone_number">
-            <Form.Label>Phone Number</Form.Label>
+            <Form.Label>
+              Phone Number <span style={optionalFieldStyle}>(optional)</span>
+            </Form.Label>
             <Form.Control
               type="text"
               name="phone_number"
@@ -253,7 +254,6 @@ export const UpdateUserPage = () => {
               value={formData.username}
               onChange={handleChange}
               isInvalid={!!errors.username}
-              autoComplete="new-password"
             />
             <Form.Control.Feedback type="invalid">
               {errors.username}

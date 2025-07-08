@@ -155,24 +155,21 @@ def remove_friend(friend_id):
     current_user_id = get_jwt_identity()
     user = User.query.get_or_404(friend_id)
 
-    # Check if the current user is friends with the user to be removed
+    # Check friendship in both directions
     friendship_record = db.session.query(friendship).filter(
-        (friendship.c.user_id == current_user_id) & 
-        (friendship.c.friend_id == friend_id) &
-        (friendship.c.is_accepted == True)  # Ensure the friendship is accepted
+        ((friendship.c.user_id == current_user_id) & (friendship.c.friend_id == friend_id)) |
+        ((friendship.c.user_id == friend_id) & (friendship.c.friend_id == current_user_id)),
+        friendship.c.is_accepted == True
     ).first()
 
     if not friendship_record:
         return jsonify({"message": f"You are not friends with {user.username}."}), 404
     
-    current_user = User.query.get(current_user_id)
-    current_user.remove_friend(user)                # User model method
-
-    # If friendship exists, remove it
+    # Delete both directions of the friendship
     db.session.execute(
         friendship.delete().where(
-            (friendship.c.user_id == current_user_id) &
-            (friendship.c.friend_id == friend_id)
+            ((friendship.c.user_id == current_user_id) & (friendship.c.friend_id == friend_id)) |
+            ((friendship.c.user_id == friend_id) & (friendship.c.friend_id == current_user_id))
         )
     )
     db.session.commit()
